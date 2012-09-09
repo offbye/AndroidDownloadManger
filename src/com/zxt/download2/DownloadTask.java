@@ -89,6 +89,8 @@ public class DownloadTask {
      * 下载的状态
      */
     private volatile DownloadState downloadState;
+    public volatile int progress;
+
 
     /**
      * 构造函数

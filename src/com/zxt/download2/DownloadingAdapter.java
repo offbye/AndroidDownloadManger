@@ -1,8 +1,6 @@
 
 package com.zxt.download2;
 
-import com.zxt.download2.DownloadTask.DownloadState;
-
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -14,6 +12,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import java.text.DecimalFormat;
+import java.text.NumberFormat;
 import java.util.HashMap;
 import java.util.List;
 
@@ -28,7 +27,8 @@ public class DownloadingAdapter extends ArrayAdapter<DownloadTask> {
     private Download2Activity mContext;
 
     private String downloadingMsg;
-    private HashMap<String,Boolean> addedList =  new  HashMap<String,Boolean>();
+
+    private HashMap<String, Boolean> addedList = new HashMap<String, Boolean>();
 
     public DownloadingAdapter(Download2Activity context, int textViewResourceId,
             List<DownloadTask> taskList) {
@@ -69,8 +69,9 @@ public class DownloadingAdapter extends ArrayAdapter<DownloadTask> {
         holder.mProgressBar = (ProgressBar) convertView.findViewById(R.id.progress);
         holder.mProgressBar.setMax(100);
 
-        if (task.getTotalSize() != 0) {
-            holder.mProgressBar.setProgress(task.getFinishedSize() / task.getTotalSize() * 100);
+        //holder.mProgressBar.setProgress(task.progress);
+        if(task.getTotalSize() > 0) {
+            holder.mProgressBar.setProgress(task.getFinishedSize() * 100 / task.getTotalSize());
         }
 
         switch (mTaskList.get(position).getDownloadState()) {
@@ -96,94 +97,95 @@ public class DownloadingAdapter extends ArrayAdapter<DownloadTask> {
                 break;
         }
 
-        if (!task.getDownloadState().equals(DownloadState.FINISHED) ) {
-            Log.d(TAG, "add listener");
-            DownloadListener downloadListener=  new DownloadListener() {
-
-                @Override
-                public void onDownloadFinish(String filepath) {
-                    task.setDownloadState(DownloadState.FINISHED);
-                    Log.d(TAG, "onDownloadFinish");
-                    mContext.runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            holder.mProgressBar.setProgress(100);
-                            holder.mImageView.setImageResource(R.drawable.ic_launcher);
-                            holder.mStatus.setText(R.string.download_downloaded);
-                        }
-                    });
-                }
-
-                @Override
-                public void onDownloadStart() {
-                    Log.d(TAG, "onDownloadStart");
-                    task.setDownloadState(DownloadState.INITIALIZE);
-                    mContext.runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            holder.mImageView.setImageResource(R.drawable.ic_download_pause);
-                            holder.mStatus.setText(R.string.download_downloading);
-
-                        }
-                    });
-                }
-
-                @Override
-                public void onDownloadPause() {
-                    Log.d(TAG, "onDownloadPause");
-                    mTaskList.get(position).setDownloadState(DownloadState.PAUSE);
-                    mContext.runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            holder.mImageView.setImageResource(R.drawable.ic_download_ing);
-                            holder.mStatus.setText(R.string.download_stopped);
-                        }
-                    });
-                }
-
-                @Override
-                public void onDownloadStop() {
-                    task.setDownloadState(DownloadState.PAUSE);
-                    mContext.runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            holder.mImageView.setImageResource(R.drawable.ic_download_ing);
-                            holder.mStatus.setText(R.string.download_stopped);
-
-                        }
-                    });
-                }
-
-                @Override
-                public void onDownloadFail() {
-                    Log.d(TAG, "onDownloadFail");
-                    mTaskList.get(position).setDownloadState(DownloadState.PAUSE);
-                    mContext.runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            holder.mImageView.setImageResource(R.drawable.ic_download_retry);
-                            holder.mStatus.setText(R.string.download_failed);
-                        }
-                    });
-                }
-
-                @Override
-                public void onDownloadProgress(int finishedSize, int totalSize,
-                        double progressPercent) {
-                    Log.d(TAG, "download " + finishedSize);
-                    holder.mProgressBar.setProgress((int) progressPercent);
-                    holder.mSize.setText(formatSize(finishedSize, totalSize));
-
-                    // fast refresh may cause performance problem?
-                    holder.mImageView.setImageResource(R.drawable.ic_download_ing);
-
-                }
-            };
-            
-            DownloadTaskManager.getInstance(mContext).addListener(task, downloadListener);
-            
-            addedList.put(task.getUrl(), true);
-        }
+        // if (!task.getDownloadState().equals(DownloadState.FINISHED) ) {
+        // Log.d(TAG, "add listener");
+        // DownloadListener downloadListener= new DownloadListener() {
+        //
+        // @Override
+        // public void onDownloadFinish(String filepath) {
+        // task.setDownloadState(DownloadState.FINISHED);
+        // Log.d(TAG, "onDownloadFinish");
+        // mContext.runOnUiThread(new Runnable() {
+        // @Override
+        // public void run() {
+        // holder.mProgressBar.setProgress(100);
+        // holder.mImageView.setImageResource(R.drawable.ic_launcher);
+        // holder.mStatus.setText(R.string.download_downloaded);
+        // }
+        // });
+        // }
+        //
+        // @Override
+        // public void onDownloadStart() {
+        // Log.d(TAG, "onDownloadStart");
+        // task.setDownloadState(DownloadState.INITIALIZE);
+        // mContext.runOnUiThread(new Runnable() {
+        // @Override
+        // public void run() {
+        // holder.mImageView.setImageResource(R.drawable.ic_download_pause);
+        // holder.mStatus.setText(R.string.download_downloading);
+        //
+        // }
+        // });
+        // }
+        //
+        // @Override
+        // public void onDownloadPause() {
+        // Log.d(TAG, "onDownloadPause");
+        // mTaskList.get(position).setDownloadState(DownloadState.PAUSE);
+        // mContext.runOnUiThread(new Runnable() {
+        // @Override
+        // public void run() {
+        // holder.mImageView.setImageResource(R.drawable.ic_download_ing);
+        // holder.mStatus.setText(R.string.download_stopped);
+        // }
+        // });
+        // }
+        //
+        // @Override
+        // public void onDownloadStop() {
+        // task.setDownloadState(DownloadState.PAUSE);
+        // mContext.runOnUiThread(new Runnable() {
+        // @Override
+        // public void run() {
+        // holder.mImageView.setImageResource(R.drawable.ic_download_ing);
+        // holder.mStatus.setText(R.string.download_stopped);
+        //
+        // }
+        // });
+        // }
+        //
+        // @Override
+        // public void onDownloadFail() {
+        // Log.d(TAG, "onDownloadFail");
+        // mTaskList.get(position).setDownloadState(DownloadState.PAUSE);
+        // mContext.runOnUiThread(new Runnable() {
+        // @Override
+        // public void run() {
+        // holder.mImageView.setImageResource(R.drawable.ic_download_retry);
+        // holder.mStatus.setText(R.string.download_failed);
+        // }
+        // });
+        // }
+        //
+        // @Override
+        // public void onDownloadProgress(int finishedSize, int totalSize,
+        // double progressPercent) {
+        // Log.d(TAG, "download " + finishedSize);
+        // holder.mProgressBar.setProgress((int) progressPercent);
+        // holder.mSize.setText(formatSize(finishedSize, totalSize));
+        //
+        // // fast refresh may cause performance problem?
+        // holder.mImageView.setImageResource(R.drawable.ic_download_ing);
+        //
+        // }
+        // };
+        //
+        // DownloadTaskManager.getInstance(mContext).addListener(task,
+        // downloadListener);
+        //
+        // addedList.put(task.getUrl(), true);
+        // }
 
         holder.mImageView.setOnClickListener(new OnClickListener() {
 
@@ -192,15 +194,14 @@ public class DownloadingAdapter extends ArrayAdapter<DownloadTask> {
 
                 switch (mTaskList.get(position).getDownloadState()) {
                     case PAUSE:
-                        Log.i(TAG, "continue " + mTaskList.get(position).getFileName());
-                        DownloadTaskManager.getInstance(mContext).continueDownload(
-                                mTaskList.get(position));
+                        Log.i(TAG, "continue " +task.getFileName());
                         holder.mImageView.setImageResource(R.drawable.ic_download_ing);// ???
+                        DownloadTaskManager.getInstance(mContext).continueDownload(task);
                         break;
                     case DOWNLOADING:
-                        Log.i(TAG, "pause " + mTaskList.get(position).getFileName());
-                        DownloadTaskManager.getInstance(mContext).pauseDownload(
-                                mTaskList.get(position));
+                        Log.i(TAG, "pause " + task.getFileName());
+                        holder.mImageView.setImageResource(R.drawable.ic_download_pause); 
+                        DownloadTaskManager.getInstance(mContext).pauseDownload(task);
                         break;
                     case FINISHED:
 
@@ -218,8 +219,10 @@ public class DownloadingAdapter extends ArrayAdapter<DownloadTask> {
     }
 
     private String formatSize(int finishedSize, int totalSize) {
-        DecimalFormat df = new DecimalFormat("0.#");
         StringBuilder sb = new StringBuilder(50);
+        NumberFormat df = NumberFormat.getNumberInstance();
+        df.setMaximumFractionDigits(1);
+        
         double finished = finishedSize / 1024 / 1024;
         if (finished < 1) {
             sb.append(df.format(finishedSize / 1024)).append("K / ");

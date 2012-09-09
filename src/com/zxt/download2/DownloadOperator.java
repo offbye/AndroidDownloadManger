@@ -112,6 +112,7 @@ public class DownloadOperator extends AsyncTask<Void, Integer, Void> {
             Log.d(TAG, "downloadListeners size=" + downloadListeners.size());
 
             Logger.i(TAG, "start writing data to file.");
+            int size = totalSize / 200 > 102400 ? 102400 : totalSize / 200; //降低刷新频率，下载100k刷新一次页面
             byte[] buffer = new byte[4096];
             int length = -1;
             while ((length = is.read(buffer)) != -1) {
@@ -148,13 +149,13 @@ public class DownloadOperator extends AsyncTask<Void, Integer, Void> {
                     mDownloadTask.setFinishedSize(finishedSize);
                     mDlTaskMng.updateDownloadTask(mDownloadTask);
                 }
+                
 
-                // if (finishedSize - mDownloadTask.getFinishedSize() >
-                // mDownloadTask.getTotalSize() / 200) {
+                if (finishedSize - mDownloadTask.getFinishedSize() > mDownloadTask.getTotalSize() / size) {
 
-                // update progress.
-                publishProgress(finishedSize, totalSize);
-                // }
+                    // update progress.
+                    publishProgress(finishedSize, totalSize);
+                }
             }
 
             mDownloadTask.setDownloadState(DownloadState.FINISHED);

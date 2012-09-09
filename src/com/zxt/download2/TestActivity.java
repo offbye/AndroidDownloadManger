@@ -21,6 +21,10 @@ public class TestActivity extends Activity implements OnClickListener {
         setContentView(R.layout.test);
         findViewById(R.id.download_add).setOnClickListener(this);
         findViewById(R.id.download_add2).setOnClickListener(this);
+        findViewById(R.id.download_add3).setOnClickListener(this);
+        findViewById(R.id.download_add4).setOnClickListener(this);
+        findViewById(R.id.download_add5).setOnClickListener(this);
+        findViewById(R.id.download_add6).setOnClickListener(this);
         findViewById(R.id.download_list).setOnClickListener(this);
 
         DownloadListener mDownLoadListener = new DownloadListener() {
@@ -76,14 +80,51 @@ public class TestActivity extends Activity implements OnClickListener {
             case R.id.download_add2:
                 DownloadTask downloadTask2 = new DownloadTask(
                         "http://mirror.bjtu.edu.cn/apache/axis/axis2/java/core/1.6.2/axis2-eclipse-service-plugin-1.6.2.zip");
-//                downloadTask.addDownloadListener(mDownLoadListener);
-                // 这里下载保存的文件名，要定一个规范
                 downloadTask2.setFileName("axis2.zip");
                 downloadTask2.setTitle("axis2");
                 downloadTask2.setFilePath("/sdcard/");
                 
                 DownloadTaskManager.getInstance(this).startDownload(downloadTask2);
                 break;
+                
+            case R.id.download_add3:
+                DownloadTask downloadTask3 = new DownloadTask(
+                        "http://mirror.bit.edu.cn/apache/buildr/1.4.7/buildr-1.4.7.zip");
+                downloadTask3.setFileName("axis3.zip");
+                downloadTask3.setTitle("axis3");
+                downloadTask3.setFilePath("/sdcard/");
+                
+                DownloadTaskManager.getInstance(this).startDownload(downloadTask3);
+                break;
+                
+            case R.id.download_add4:
+                DownloadTask downloadTask4 = new DownloadTask(
+                        "http://mirror.bit.edu.cn/apache/empire-db/2.4.0/apache-empire-db-2.4.0-dist.zip");
+                downloadTask4.setFileName("axis4.zip");
+                downloadTask4.setTitle("axis4");
+                downloadTask4.setFilePath("/sdcard/");
+                
+                DownloadTaskManager.getInstance(this).startDownload(downloadTask4);
+                break;
+            case R.id.download_add5:
+                DownloadTask downloadTask5 = new DownloadTask(
+                        "http://mirror.bit.edu.cn/apache/gora/0.2.1/apache-gora-0.2.1-src.zip");
+                downloadTask5.setFileName("axis5.zip");
+                downloadTask5.setTitle("axis5");
+                downloadTask5.setFilePath("/sdcard/");
+                
+                DownloadTaskManager.getInstance(this).startDownload(downloadTask5);
+                break;
+            case R.id.download_add6:
+                DownloadTask downloadTask6 = new DownloadTask(
+                        "http://mirror.bit.edu.cn/apache/empire-db/2.3.0/apache-empire-db-2.3.0-dist.zip");
+                downloadTask6.setFileName("axis6.zip");
+                downloadTask6.setTitle("axis6");
+                downloadTask6.setFilePath("/sdcard/");
+                
+                DownloadTaskManager.getInstance(this).startDownload(downloadTask6);
+                break;
+                
             case R.id.download_list:
                 Toast.makeText(this, "list", 1).show();
                 Intent i = new Intent(this, Download2Activity.class);
