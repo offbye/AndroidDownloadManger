@@ -16,7 +16,8 @@ import java.net.MalformedURLException;
 import java.net.ProtocolException;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * 下载操作类 <BR>
@@ -50,7 +51,7 @@ public class DownloadOperator extends AsyncTask<Void, Integer, Void> {
      */
     private volatile boolean mStop = false;
 
-    private CopyOnWriteArrayList<DownloadListener> downloadListeners = new CopyOnWriteArrayList<DownloadListener>();
+    private List<DownloadListener> downloadListeners;
 
     /**
      * Constructor
@@ -65,6 +66,7 @@ public class DownloadOperator extends AsyncTask<Void, Integer, Void> {
         Logger.d(TAG, "file path : " + mDownloadTask.getFilePath());
         Logger.d(TAG, "file name : " + mDownloadTask.getFileName());
         Logger.d(TAG, "download url : " + mDownloadTask.getUrl());
+        downloadListeners = Collections.synchronizedList(new ArrayList<DownloadListener>());
     }
 
     /**
@@ -147,11 +149,12 @@ public class DownloadOperator extends AsyncTask<Void, Integer, Void> {
                     mDlTaskMng.updateDownloadTask(mDownloadTask);
                 }
 
-                if (finishedSize - mDownloadTask.getFinishedSize() > mDownloadTask.getTotalSize() / 200) {
+                // if (finishedSize - mDownloadTask.getFinishedSize() >
+                // mDownloadTask.getTotalSize() / 200) {
 
-                    // update progress.
-                    publishProgress(finishedSize, totalSize);
-                }
+                // update progress.
+                publishProgress(finishedSize, totalSize);
+                // }
             }
 
             mDownloadTask.setDownloadState(DownloadState.FINISHED);
@@ -168,10 +171,8 @@ public class DownloadOperator extends AsyncTask<Void, Integer, Void> {
             mDownloadTask.setFinishedSize(finishedSize);
             mDlTaskMng.updateDownloadTask(mDownloadTask);
 
-            if(null != downloadListeners && !downloadListeners.isEmpty()){
-                for (DownloadListener l : downloadListeners) {
-                    l.onDownloadFail();
-                }
+            for (DownloadListener l : downloadListeners) {
+                l.onDownloadFail();
             }
 
         } finally {
@@ -206,10 +207,8 @@ public class DownloadOperator extends AsyncTask<Void, Integer, Void> {
         int finished = values[0];
         int total = values[1];
 
-        if(null != downloadListeners && !downloadListeners.isEmpty()){
-            for (DownloadListener l : downloadListeners) {
-                l.onDownloadProgress(finished, total, Math.ceil(finished * 100 / total));
-            }
+        for (DownloadListener l : downloadListeners) {
+            l.onDownloadProgress(finished, total, Math.ceil(finished * 100 / total));
         }
     }
 

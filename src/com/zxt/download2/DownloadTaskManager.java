@@ -213,6 +213,7 @@ public class DownloadTaskManager
     boolean addListener(DownloadTask downloadTask, DownloadListener listener ){
         if(null != mDownloadMap.get(downloadTask)) {
             mDownloadMap.get(downloadTask).addDownloadListener(listener);
+            Log.d(TAG, downloadTask.getFileName() + " addListener " );
             return true;
         }
         return false;
