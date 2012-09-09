@@ -224,8 +224,7 @@ public class DownloadingAdapter extends ArrayAdapter<DownloadTask> {
 
     private String formatSize(int finishedSize, int totalSize) {
         StringBuilder sb = new StringBuilder(50);
-        NumberFormat df = NumberFormat.getNumberInstance();
-        df.setMaximumFractionDigits(1);
+        DecimalFormat df = new DecimalFormat("0.##");
         
         double finished = finishedSize / 1024 / 1024;
         if (finished < 1) {
