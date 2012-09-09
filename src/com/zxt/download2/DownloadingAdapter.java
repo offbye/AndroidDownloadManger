@@ -1,6 +1,8 @@
 
 package com.zxt.download2;
 
+import com.zxt.download2.Download2Activity.MyDownloadListener;
+
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -69,7 +71,6 @@ public class DownloadingAdapter extends ArrayAdapter<DownloadTask> {
         holder.mProgressBar = (ProgressBar) convertView.findViewById(R.id.progress);
         holder.mProgressBar.setMax(100);
 
-        //holder.mProgressBar.setProgress(task.progress);
         if(task.getTotalSize() > 0) {
             holder.mProgressBar.setProgress(task.getFinishedSize() * 100 / task.getTotalSize());
         }
@@ -192,16 +193,19 @@ public class DownloadingAdapter extends ArrayAdapter<DownloadTask> {
             @Override
             public void onClick(View v) {
 
-                switch (mTaskList.get(position).getDownloadState()) {
+                switch (task.getDownloadState()) {
                     case PAUSE:
                         Log.i(TAG, "continue " +task.getFileName());
                         holder.mImageView.setImageResource(R.drawable.ic_download_ing);// ???
                         DownloadTaskManager.getInstance(mContext).continueDownload(task);
+                        mContext.addListener(task);
+
                         break;
                     case DOWNLOADING:
                         Log.i(TAG, "pause " + task.getFileName());
                         holder.mImageView.setImageResource(R.drawable.ic_download_pause); 
                         DownloadTaskManager.getInstance(mContext).pauseDownload(task);
+
                         break;
                     case FINISHED:
 
@@ -254,9 +258,4 @@ public class DownloadingAdapter extends ArrayAdapter<DownloadTask> {
 
     }
 
-    public void refreshListView() {
-        if (mContext != null) {
-            // mContext.refreshListView();
-        }
-    }
 }

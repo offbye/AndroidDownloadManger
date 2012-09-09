@@ -53,90 +53,96 @@ public class Download2Activity extends Activity {
         for (final DownloadTask task : mDownloadlist) {
             if (!task.getDownloadState().equals(DownloadState.FINISHED)) {
                 Log.d(TAG, "add listener");
-                DownloadListener downloadListener = new DownloadListener() {
-
-                    @Override
-                    public void onDownloadFinish(String filepath) {
-                        Log.d(TAG, "onDownloadFinish");
-                        task.setDownloadState(DownloadState.FINISHED);
-                        Download2Activity.this.runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                mDownloadingAdapter.notifyDataSetChanged();
-                            }
-                        });
-
-                    }
-
-                    @Override
-                    public void onDownloadStart() {
-                        task.setDownloadState(DownloadState.INITIALIZE);
-                        Download2Activity.this.runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                mDownloadingAdapter.notifyDataSetChanged();
-                            }
-                        });
-                    }
-
-                    @Override
-                    public void onDownloadPause() {
-                      Log.d(TAG, "onDownloadPause");
-                      task.setDownloadState(DownloadState.PAUSE);
-                        Download2Activity.this.runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                mDownloadingAdapter.notifyDataSetChanged();
-                            }
-                        });
-                    }
-
-                    @Override
-                    public void onDownloadStop() {
-                        Log.d(TAG, "onDownloadStop");
-                        task.setDownloadState(DownloadState.PAUSE);
-                        Download2Activity.this.runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                mDownloadingAdapter.notifyDataSetChanged();
-                            }
-                        });
-                    }
-
-                    @Override
-                    public void onDownloadFail() {
-                        Log.d(TAG, "onDownloadFail");
-                        task.setDownloadState(DownloadState.PAUSE);
-                        Download2Activity.this.runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                mDownloadingAdapter.notifyDataSetChanged();
-                            }
-                        });
-                    }
-
-                    @Override
-                    public void onDownloadProgress(final int finishedSize,final int totalSize,
-                            double progressPercent) {
-                        Log.d(TAG, "download " + finishedSize);
-                        task.setDownloadState(DownloadState.DOWNLOADING);
-                        task.setFinishedSize(finishedSize);
-                        task.setTotalSize(totalSize);
-                        task.progress = (int)progressPercent;
-
-                        Download2Activity.this.runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                mDownloadingAdapter.notifyDataSetChanged();                            }
-                        });
-
-
-                    }
-                };
-
-                DownloadTaskManager.getInstance(mContext).addListener(task, downloadListener);
-
+                addListener(task);
             }
         }
     }
+    
+    class MyDownloadListener implements DownloadListener {
+        private DownloadTask task;
+        public MyDownloadListener(DownloadTask downloadTask ){
+            task = downloadTask;
+        }
+
+        @Override
+        public void onDownloadFinish(String filepath) {
+            Log.d(TAG, "onDownloadFinish");
+            task.setDownloadState(DownloadState.FINISHED);
+            Download2Activity.this.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    mDownloadingAdapter.notifyDataSetChanged();
+                }
+            });
+
+        }
+
+        @Override
+        public void onDownloadStart() {
+            task.setDownloadState(DownloadState.INITIALIZE);
+            Download2Activity.this.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    mDownloadingAdapter.notifyDataSetChanged();
+                }
+            });
+        }
+
+        @Override
+        public void onDownloadPause() {
+          Log.d(TAG, "onDownloadPause");
+          task.setDownloadState(DownloadState.PAUSE);
+            Download2Activity.this.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    mDownloadingAdapter.notifyDataSetChanged();
+                }
+            });
+        }
+
+        @Override
+        public void onDownloadStop() {
+            Log.d(TAG, "onDownloadStop");
+            task.setDownloadState(DownloadState.PAUSE);
+            Download2Activity.this.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    mDownloadingAdapter.notifyDataSetChanged();
+                }
+            });
+        }
+
+        @Override
+        public void onDownloadFail() {
+            Log.d(TAG, "onDownloadFail");
+            task.setDownloadState(DownloadState.PAUSE);
+            Download2Activity.this.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    mDownloadingAdapter.notifyDataSetChanged();
+                }
+            });
+        }
+
+        @Override
+        public void onDownloadProgress(final int finishedSize,final int totalSize,
+                double progressPercent) {
+            Log.d(TAG, "download " + finishedSize);
+            task.setDownloadState(DownloadState.DOWNLOADING);
+            task.setFinishedSize(finishedSize);
+            task.setTotalSize(totalSize);
+            task.setDlPercent(progressPercent);
+
+            Download2Activity.this.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    mDownloadingAdapter.notifyDataSetChanged();                            }
+            });
+        }
+    }
+    
+    public void addListener(DownloadTask task){
+        DownloadTaskManager.getInstance(mContext).addListener(task, new MyDownloadListener(task));
+    }
+    
 }
