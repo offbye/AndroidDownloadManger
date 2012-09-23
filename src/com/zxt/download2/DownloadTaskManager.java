@@ -1,17 +1,14 @@
 package com.zxt.download2;
 
 import com.zxt.download2.DownloadTask.DownloadState;
-import com.zxt.log.Logger;
 
 import android.content.Context;
 import android.util.Log;
 
 import java.io.File;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 /**
  * 下载任务管理类，单例模式<BR>
@@ -84,7 +81,7 @@ public class DownloadTaskManager
         if (downloadTask.getFilePath() == null
                 || downloadTask.getFilePath().trim().length() == 0)
         {
-            Logger.i(TAG,
+            Log.i(TAG,
                     "file path is invalid. file path : "
                             + downloadTask.getFilePath()
                             + ", use default file path : " + DEFAULT_FILE_PATH);
@@ -94,7 +91,7 @@ public class DownloadTaskManager
         if (downloadTask.getFileName() == null
                 || downloadTask.getFileName().trim().length() == 0)
         {
-            Logger.e(TAG,
+            Log.e(TAG,
                     "file name is invalid. file name : "
                             + downloadTask.getFileName());
             return;

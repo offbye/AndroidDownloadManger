@@ -1,13 +1,13 @@
 package com.zxt.download2;
 
 import com.zxt.download2.DownloadTask.DownloadState;
-import com.zxt.log.Logger;
 
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -84,7 +84,7 @@ public class DownloadDBHelper extends SQLiteOpenHelper
     @Override
     public void onCreate(SQLiteDatabase db)
     {
-        Logger.i(TAG, "create download table.");
+        Log.i(TAG, "create download table.");
         StringBuffer buffer = new StringBuffer("create table ");
         buffer.append(TABLE_NAME);
         buffer.append("(");
@@ -108,7 +108,7 @@ public class DownloadDBHelper extends SQLiteOpenHelper
         buffer.append(" integer)");
         
         String sql = buffer.toString();
-        Logger.i(TAG, sql);
+        Log.i(TAG, sql);
         db.execSQL(sql);
     }
     

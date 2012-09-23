@@ -2,7 +2,6 @@
 package com.zxt.download2;
 
 import com.zxt.download2.DownloadTask.DownloadState;
-import com.zxt.log.Logger;
 
 import android.os.AsyncTask;
 import android.util.Log;
@@ -63,9 +62,9 @@ public class DownloadOperator extends AsyncTask<Void, Integer, Void> {
         mDownloadTask = downloadTask;
         mDlTaskMng = dlTaskMng;
 
-        Logger.d(TAG, "file path : " + mDownloadTask.getFilePath());
-        Logger.d(TAG, "file name : " + mDownloadTask.getFileName());
-        Logger.d(TAG, "download url : " + mDownloadTask.getUrl());
+        Log.d(TAG, "file path : " + mDownloadTask.getFilePath());
+        Log.d(TAG, "file name : " + mDownloadTask.getFileName());
+        Log.d(TAG, "download url : " + mDownloadTask.getUrl());
         downloadListeners = Collections.synchronizedList(new ArrayList<DownloadListener>());
     }
 
@@ -111,14 +110,14 @@ public class DownloadOperator extends AsyncTask<Void, Integer, Void> {
             is = conn.getInputStream();
             Log.d(TAG, "downloadListeners size=" + downloadListeners.size());
 
-            Logger.i(TAG, "start writing data to file.");
+            Log.i(TAG, "start writing data to file.");
             int size = totalSize / 200 > 102400 ? 102400 : totalSize / 200; //降低刷新频率，下载100k刷新一次页面
             byte[] buffer = new byte[4096];
             int length = -1;
             while ((length = is.read(buffer)) != -1) {
                 // pause download
                 if (mPause) {
-                    Logger.i(TAG, "pause download, exit download loop.");
+                    Log.i(TAG, "pause download, exit download loop.");
                     mDownloadTask.setDownloadState(DownloadState.PAUSE);
                     mDownloadTask.setFinishedSize(finishedSize);
                     mDlTaskMng.updateDownloadTask(mDownloadTask);
@@ -131,7 +130,7 @@ public class DownloadOperator extends AsyncTask<Void, Integer, Void> {
 
                 // stop download, delete the download task
                 if (mStop) {
-                    Logger.i(TAG, "stop download, exit download loop and delete download task.");
+                    Log.i(TAG, "stop download, exit download loop and delete download task.");
                     mDlTaskMng.deleteDownloadTask(mDownloadTask);
 
                     for (DownloadListener l : downloadListeners) {
@@ -166,7 +165,7 @@ public class DownloadOperator extends AsyncTask<Void, Integer, Void> {
                 l.onDownloadFinish(mDownloadTask.getFilePath() + "/" + mDownloadTask.getFileName());
             }
         } catch (Exception e) {
-            Logger.e(TAG, "download exception : " + e.getMessage());
+            Log.e(TAG, "download exception : " + e.getMessage());
             e.printStackTrace();
             mDownloadTask.setDownloadState(DownloadState.PAUSE);
             mDownloadTask.setFinishedSize(finishedSize);
@@ -217,7 +216,7 @@ public class DownloadOperator extends AsyncTask<Void, Integer, Void> {
      * 暂停下载 <BR>
      */
     void pauseDownload() {
-        Logger.i(TAG, "pause download.");
+        Log.i(TAG, "pause download.");
         mPause = true;
         mStop = false;
     }
@@ -226,7 +225,7 @@ public class DownloadOperator extends AsyncTask<Void, Integer, Void> {
      * 停止下载 <BR>
      */
     void stopDownload() {
-        Logger.i(TAG, "stop download.");
+        Log.i(TAG, "stop download.");
         mStop = true;
         mPause = false;
     }
@@ -235,7 +234,7 @@ public class DownloadOperator extends AsyncTask<Void, Integer, Void> {
      * 续传<BR>
      */
     void continueDownload() {
-        Logger.i(TAG, "continue download.");
+        Log.i(TAG, "continue download.");
         mPause = false;
         mStop = false;
         execute();
@@ -245,7 +244,7 @@ public class DownloadOperator extends AsyncTask<Void, Integer, Void> {
      * 开始下载 <BR>
      */
     void startDownload() {
-        Logger.i(TAG, "start download.");
+        Log.i(TAG, "start download.");
         mPause = false;
         mStop = false;
         execute();
@@ -263,7 +262,7 @@ public class DownloadOperator extends AsyncTask<Void, Integer, Void> {
             conn.setRequestMethod("GET");
 
             int fileSize = conn.getContentLength();
-            Logger.d(TAG, "total size[" + fileSize + "]");
+            Log.d(TAG, "total size[" + fileSize + "]");
             mDownloadTask.setTotalSize(fileSize);
             File file = new File(mDownloadTask.getFilePath() + "/" + mDownloadTask.getFileName());
             if (!file.exists()) {

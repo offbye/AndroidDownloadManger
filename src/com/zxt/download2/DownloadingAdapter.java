@@ -1,8 +1,6 @@
 
 package com.zxt.download2;
 
-import com.zxt.download2.Download2Activity.MyDownloadListener;
-
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -14,7 +12,6 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import java.text.DecimalFormat;
-import java.text.NumberFormat;
 import java.util.HashMap;
 import java.util.List;
 
