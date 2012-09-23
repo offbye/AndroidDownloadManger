@@ -2,6 +2,9 @@
 package com.zxt.download2;
 
 import android.app.Activity;
+import android.app.Notification;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.net.ConnectivityManager;
@@ -10,17 +13,21 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.widget.RemoteViews;
 import android.widget.Toast;
 
 public class TestActivity extends Activity implements OnClickListener {
 
     protected static final String TAG = "TestActivity";
 
+    private Context mContext;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
         super.onCreate(savedInstanceState);
+
+        mContext = this;
         setContentView(R.layout.test);
         findViewById(R.id.download_add).setOnClickListener(this);
         findViewById(R.id.download_add2).setOnClickListener(this);
@@ -31,7 +38,7 @@ public class TestActivity extends Activity implements OnClickListener {
         findViewById(R.id.download_list).setOnClickListener(this);
         findViewById(R.id.downloaded_list).setOnClickListener(this);
 
-
+        mNotificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
         DownloadListener mDownLoadListener = new DownloadListener() {
             @Override
             public void onDownloadFinish(String filepath) {
@@ -66,14 +73,13 @@ public class TestActivity extends Activity implements OnClickListener {
 
         };
 
-
     }
 
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.download_add:
-                DownloadTask  downloadTask = new DownloadTask(
+                DownloadTask downloadTask = new DownloadTask(
                         "http://apache.etoak.com/ant/ivy/2.3.0-rc1/apache-ivy-2.3.0-rc1-src.zip");
                 downloadTask.setFileName("apache-ivy.zip");
                 downloadTask.setTitle("apache-ivy");
@@ -88,28 +94,79 @@ public class TestActivity extends Activity implements OnClickListener {
                 downloadTask2.setFileName("axis2.zip");
                 downloadTask2.setTitle("axis2");
                 downloadTask2.setFilePath("/sdcard/");
-                
+
                 DownloadTaskManager.getInstance(this).startDownload(downloadTask2);
                 break;
-                
+
             case R.id.download_add3:
                 DownloadTask downloadTask3 = new DownloadTask(
                         "http://mirror.bit.edu.cn/apache/buildr/1.4.7/buildr-1.4.7.zip");
                 downloadTask3.setFileName("axis3.zip");
                 downloadTask3.setTitle("axis3");
                 downloadTask3.setFilePath("/sdcard/");
-                
+
                 DownloadTaskManager.getInstance(this).startDownload(downloadTask3);
                 break;
-                
+
             case R.id.download_add4:
                 DownloadTask downloadTask4 = new DownloadTask(
                         "http://mirror.bit.edu.cn/apache/empire-db/2.4.0/apache-empire-db-2.4.0-dist.zip");
                 downloadTask4.setFileName("axis4.zip");
                 downloadTask4.setTitle("axis4");
                 downloadTask4.setFilePath("/sdcard/");
-                
+
                 DownloadTaskManager.getInstance(this).startDownload(downloadTask4);
+                final Notification n = addNotifiction(downloadTask4.getTitle());
+                final int nid = downloadTask4.getUrl().hashCode();
+                DownloadTaskManager.getInstance(this).addListener(downloadTask4,
+                        new DownloadListener() {
+
+                            @Override
+                            public void onDownloadStop() {
+                                n.contentView.setTextViewText(R.id.notify_state,
+                                        mContext.getString(R.string.download_stopped));
+
+                                mNotificationManager.notify(nid, n);
+                            }
+
+                            @Override
+                            public void onDownloadStart() {
+                                mNotificationManager.notify(nid, n);
+                            }
+
+                            @Override
+                            public void onDownloadProgress(int finishedSize, int totalSize,
+                                    double progressPercent) {
+                                n.contentView.setTextViewText(
+                                        R.id.notify_state,
+                                        mContext.getString(R.string.downloading_msg)
+                                                + (int) Math.round(progressPercent) + "%");
+                                n.contentView.setProgressBar(R.id.notify_processbar, 100,
+                                        (int) Math.round(progressPercent), false);
+                                mNotificationManager.notify(nid, n);
+                            }
+
+                            @Override
+                            public void onDownloadPause() {
+                                n.contentView.setTextViewText(R.id.notify_state,
+                                        mContext.getString(R.string.download_paused));
+                                mNotificationManager.notify(nid, n);
+                            }
+
+                            @Override
+                            public void onDownloadFinish(String filepath) {
+                                n.contentView.setTextViewText(R.id.notify_state,
+                                        mContext.getString(R.string.download_finished));
+                                mNotificationManager.notify(nid, n);
+                            }
+
+                            @Override
+                            public void onDownloadFail() {
+                                n.contentView.setTextViewText(R.id.notify_state,
+                                        mContext.getString(R.string.download_failed));
+                                mNotificationManager.notify(nid, n);
+                            }
+                        });
                 break;
             case R.id.download_add5:
                 DownloadTask downloadTask5 = new DownloadTask(
@@ -117,7 +174,7 @@ public class TestActivity extends Activity implements OnClickListener {
                 downloadTask5.setFileName("axis5.zip");
                 downloadTask5.setTitle("axis5");
                 downloadTask5.setFilePath("/sdcard/");
-                
+
                 DownloadTaskManager.getInstance(this).startDownload(downloadTask5);
                 break;
             case R.id.download_add6:
@@ -126,10 +183,10 @@ public class TestActivity extends Activity implements OnClickListener {
                 downloadTask6.setFileName("axis6.zip");
                 downloadTask6.setTitle("axis6");
                 downloadTask6.setFilePath("/sdcard/");
-                
+
                 DownloadTaskManager.getInstance(this).startDownload(downloadTask6);
                 break;
-                
+
             case R.id.download_list:
                 Toast.makeText(this, "list", 1).show();
                 Intent i = new Intent(this, Download2Activity.class);
@@ -147,7 +204,7 @@ public class TestActivity extends Activity implements OnClickListener {
         }
 
     }
-    
+
     public static boolean isNetWorkOn(Context context) {
         ConnectivityManager cManager = (ConnectivityManager) context
                 .getSystemService(Context.CONNECTIVITY_SERVICE);
@@ -157,6 +214,27 @@ public class TestActivity extends Activity implements OnClickListener {
         } else {
             return false;
         }
+    }
+
+    private NotificationManager mNotificationManager = null;
+
+    public Notification addNotifiction(String title) {
+        Notification notification = new Notification(R.drawable.ic_download_ing,
+                getString(R.string.downloading_msg), System.currentTimeMillis());
+        notification.icon = R.drawable.ic_download_ing;
+
+        notification.contentView = new RemoteViews(getApplication().getPackageName(),
+                R.layout.download_notify);
+        notification.contentView.setProgressBar(R.id.notify_processbar, 100, 0, false);
+        notification.contentView.setTextViewText(R.id.notify_state,
+                getString(R.string.downloading_msg));
+
+        notification.contentView.setTextViewText(R.id.notify_text, title);
+
+        notification.contentIntent = PendingIntent.getActivity(this, 0, new Intent(this,
+                Download2Activity.class), 0);
+        return notification;
+
     }
 
 }
