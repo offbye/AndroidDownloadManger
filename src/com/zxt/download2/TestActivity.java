@@ -118,55 +118,7 @@ public class TestActivity extends Activity implements OnClickListener {
                 DownloadTaskManager.getInstance(this).startDownload(downloadTask4);
                 final Notification n = addNotifiction(downloadTask4.getTitle());
                 final int nid = downloadTask4.getUrl().hashCode();
-                DownloadTaskManager.getInstance(this).addListener(downloadTask4,
-                        new DownloadListener() {
-
-                            @Override
-                            public void onDownloadStop() {
-                                n.contentView.setTextViewText(R.id.notify_state,
-                                        mContext.getString(R.string.download_stopped));
-
-                                mNotificationManager.notify(nid, n);
-                            }
-
-                            @Override
-                            public void onDownloadStart() {
-                                mNotificationManager.notify(nid, n);
-                            }
-
-                            @Override
-                            public void onDownloadProgress(int finishedSize, int totalSize,
-                                    double progressPercent) {
-                                n.contentView.setTextViewText(
-                                        R.id.notify_state,
-                                        mContext.getString(R.string.downloading_msg)
-                                                + (int) Math.round(progressPercent) + "%");
-                                n.contentView.setProgressBar(R.id.notify_processbar, 100,
-                                        (int) Math.round(progressPercent), false);
-                                mNotificationManager.notify(nid, n);
-                            }
-
-                            @Override
-                            public void onDownloadPause() {
-                                n.contentView.setTextViewText(R.id.notify_state,
-                                        mContext.getString(R.string.download_paused));
-                                mNotificationManager.notify(nid, n);
-                            }
-
-                            @Override
-                            public void onDownloadFinish(String filepath) {
-                                n.contentView.setTextViewText(R.id.notify_state,
-                                        mContext.getString(R.string.download_finished));
-                                mNotificationManager.notify(nid, n);
-                            }
-
-                            @Override
-                            public void onDownloadFail() {
-                                n.contentView.setTextViewText(R.id.notify_state,
-                                        mContext.getString(R.string.download_failed));
-                                mNotificationManager.notify(nid, n);
-                            }
-                        });
+                DownloadTaskManager.getInstance(this).addListener(downloadTask4, new DownloadNotificationListener(mContext, downloadTask4));
                 break;
             case R.id.download_add5:
                 DownloadTask downloadTask5 = new DownloadTask(
@@ -176,6 +128,8 @@ public class TestActivity extends Activity implements OnClickListener {
                 downloadTask5.setFilePath("/sdcard/");
 
                 DownloadTaskManager.getInstance(this).startDownload(downloadTask5);
+                DownloadTaskManager.getInstance(this).addListener(downloadTask5, new DownloadNotificationListener(mContext, downloadTask5));
+
                 break;
             case R.id.download_add6:
                 DownloadTask downloadTask6 = new DownloadTask(

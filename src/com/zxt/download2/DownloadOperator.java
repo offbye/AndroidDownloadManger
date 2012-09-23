@@ -14,9 +14,8 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.ProtocolException;
 import java.net.URL;
-import java.util.ArrayList;
 import java.util.Collections;
-import java.util.List;
+import java.util.Set;
 
 /**
  * 下载操作类 <BR>
@@ -50,7 +49,7 @@ public class DownloadOperator extends AsyncTask<Void, Integer, Void> {
      */
     private volatile boolean mStop = false;
 
-    private List<DownloadListener> downloadListeners;
+    private Set<DownloadListener> downloadListeners;
 
     /**
      * Constructor
@@ -65,7 +64,7 @@ public class DownloadOperator extends AsyncTask<Void, Integer, Void> {
         Log.d(TAG, "file path : " + mDownloadTask.getFilePath());
         Log.d(TAG, "file name : " + mDownloadTask.getFileName());
         Log.d(TAG, "download url : " + mDownloadTask.getUrl());
-        downloadListeners = Collections.synchronizedList(new ArrayList<DownloadListener>());
+        downloadListeners = Collections.synchronizedSet(mDlTaskMng.getListeners(downloadTask));
     }
 
     /**

@@ -6,9 +6,10 @@ import android.content.Context;
 import android.util.Log;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 
 /**
  * 下载任务管理类，单例模式<BR>
@@ -41,7 +42,10 @@ public class DownloadTaskManager
     /**
      * 一个下载任务对应一个下载操作实例
      */
-    private Map<DownloadTask, DownloadOperator> mDownloadMap;
+    private HashMap<DownloadTask, DownloadOperator> mDownloadMap;
+    
+    private HashMap<DownloadTask, HashSet<DownloadListener>> mDownloadListenerMap;
+
     
     /**
      * 私有默认构造
@@ -51,6 +55,7 @@ public class DownloadTaskManager
     private DownloadTaskManager(Context context)
     {
         mDownloadMap = new HashMap<DownloadTask, DownloadOperator>();
+        mDownloadListenerMap = new HashMap<DownloadTask, HashSet<DownloadListener>>();
         // 数据库操作对象实例化
         mDownloadDBHelper = new DownloadDBHelper(context, "download.db");
     }
@@ -96,6 +101,13 @@ public class DownloadTaskManager
                             + downloadTask.getFileName());
             return;
         }
+        
+        if(null == mDownloadListenerMap.get(downloadTask)){
+            HashSet<DownloadListener> set = new  HashSet<DownloadListener>(3);
+            mDownloadListenerMap.put(downloadTask, set);
+        }
+
+        
         downloadTask.setDownloadState(DownloadState.INITIALIZE);
         
         // save to database if the download task is valid, and start download.
@@ -217,9 +229,13 @@ public class DownloadTaskManager
         return mDownloadMap.containsKey(downloadTask);
     }
     
+    public HashSet<DownloadListener> getListeners(DownloadTask downloadTask){
+        return mDownloadListenerMap.get(downloadTask);
+    }
+    
     boolean addListener(DownloadTask downloadTask, DownloadListener listener ){
-        if(null != mDownloadMap.get(downloadTask)) {
-            mDownloadMap.get(downloadTask).addDownloadListener(listener);
+        if(null != mDownloadListenerMap.get(downloadTask)) {
+            mDownloadListenerMap.get(downloadTask).add(listener);
             Log.d(TAG, downloadTask.getFileName() + " addListener " );
             return true;
         }

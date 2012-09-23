@@ -22,7 +22,7 @@ public class DownloadNotificationListener implements DownloadListener {
         mId = task.getUrl().hashCode();
         mNotificationManager = (NotificationManager) mContext
                 .getSystemService(Context.NOTIFICATION_SERVICE);
-        mNotification = addNotifiction(task.getTitle());
+        mNotification = initNotifiction(task.getTitle());
     }
 
     @Override
@@ -67,11 +67,12 @@ public class DownloadNotificationListener implements DownloadListener {
         mNotification.contentView.setTextViewText(R.id.notify_state,
                 mContext.getString(R.string.download_failed));
         mNotificationManager.notify(mId, mNotification);
+        mNotificationManager.cancel(mId);
     }
 
-    public Notification addNotifiction(String title) {
+    public Notification initNotifiction(String title) {
         Notification notification = new Notification(R.drawable.ic_download_ing,
-                mContext.getString(R.string.downloading_msg), System.currentTimeMillis());
+                mContext.getString(R.string.downloading_msg) + title, System.currentTimeMillis());
         notification.icon = R.drawable.ic_download_ing;
 
         notification.contentView = new RemoteViews(mContext.getPackageName(),
@@ -83,7 +84,7 @@ public class DownloadNotificationListener implements DownloadListener {
         notification.contentView.setTextViewText(R.id.notify_text, title);
 
         notification.contentIntent = PendingIntent.getActivity(mContext, 0, new Intent(mContext,
-                Download2Activity.class), 0);
+                Download2Activity.class), PendingIntent.FLAG_UPDATE_CURRENT);
         return notification;
 
     }

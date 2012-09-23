@@ -196,6 +196,7 @@ public class DownloadingAdapter extends ArrayAdapter<DownloadTask> {
                         holder.mImageView.setImageResource(R.drawable.ic_download_ing);// ???
                         DownloadTaskManager.getInstance(mContext).continueDownload(task);
                         mContext.addListener(task);
+                        //DownloadTaskManager.getInstance(mContext).addListener(task, new DownloadNotificationListener(mContext, task));
 
                         break;
                     case DOWNLOADING:
