@@ -217,6 +217,74 @@ public class DownloadDBHelper extends SQLiteOpenHelper
         return tasks;
     }
     
+    List<DownloadTask> queryDownloaded()
+    {
+        List<DownloadTask> tasks = new ArrayList<DownloadTask>();
+        
+        SQLiteDatabase db = getReadableDatabase();
+        Cursor cursor = db.query(TABLE_NAME,
+                new String[] { FIELD_URL, FIELD_DOWNLOAD_STATE, FIELD_FILEPATH,
+                        FIELD_FILENAME, FIELD_TITLE,FIELD_THUMBNAIL,FIELD_FINISHED_SIZE, FIELD_TOTAL_SIZE },
+                FIELD_DOWNLOAD_STATE + "='FINISHED'",
+                null,
+                null,
+                null,
+                null);
+        if (cursor != null)
+        {
+            while (cursor.moveToNext())
+            {
+                DownloadTask dlTask = new DownloadTask(cursor.getString(0));
+                dlTask.setDownloadState(DownloadState.valueOf(cursor.getString(1)));
+                dlTask.setFilePath(cursor.getString(2));
+                dlTask.setFileName(cursor.getString(3));
+                dlTask.setTitle(cursor.getString(4));
+                dlTask.setThumbnail(cursor.getString(5));
+                dlTask.setFinishedSize(cursor.getInt(6));
+                dlTask.setTotalSize(cursor.getInt(7));
+                
+                tasks.add(dlTask);
+            }
+            cursor.close();
+        }
+        
+        return tasks;
+    }
+    
+    List<DownloadTask> queryUnDownloaded()
+    {
+        List<DownloadTask> tasks = new ArrayList<DownloadTask>();
+        
+        SQLiteDatabase db = getReadableDatabase();
+        Cursor cursor = db.query(TABLE_NAME,
+                new String[] { FIELD_URL, FIELD_DOWNLOAD_STATE, FIELD_FILEPATH,
+                        FIELD_FILENAME, FIELD_TITLE,FIELD_THUMBNAIL,FIELD_FINISHED_SIZE, FIELD_TOTAL_SIZE },
+                FIELD_DOWNLOAD_STATE + "<> 'FINISHED'",
+                null,
+                null,
+                null,
+                null);
+        if (cursor != null)
+        {
+            while (cursor.moveToNext())
+            {
+                DownloadTask dlTask = new DownloadTask(cursor.getString(0));
+                dlTask.setDownloadState(DownloadState.valueOf(cursor.getString(1)));
+                dlTask.setFilePath(cursor.getString(2));
+                dlTask.setFileName(cursor.getString(3));
+                dlTask.setTitle(cursor.getString(4));
+                dlTask.setThumbnail(cursor.getString(5));
+                dlTask.setFinishedSize(cursor.getInt(6));
+                dlTask.setTotalSize(cursor.getInt(7));
+                
+                tasks.add(dlTask);
+            }
+            cursor.close();
+        }
+        
+        return tasks;
+    }
+    
     /**
      * 
      * 更新下载任务<BR>

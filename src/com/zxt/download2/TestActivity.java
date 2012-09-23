@@ -2,7 +2,10 @@
 package com.zxt.download2;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -26,6 +29,8 @@ public class TestActivity extends Activity implements OnClickListener {
         findViewById(R.id.download_add5).setOnClickListener(this);
         findViewById(R.id.download_add6).setOnClickListener(this);
         findViewById(R.id.download_list).setOnClickListener(this);
+        findViewById(R.id.downloaded_list).setOnClickListener(this);
+
 
         DownloadListener mDownLoadListener = new DownloadListener() {
             @Override
@@ -128,12 +133,30 @@ public class TestActivity extends Activity implements OnClickListener {
             case R.id.download_list:
                 Toast.makeText(this, "list", 1).show();
                 Intent i = new Intent(this, Download2Activity.class);
+                i.putExtra(Download2Activity.DOWNLOADED, false);
                 startActivity(i);
+                break;
+            case R.id.downloaded_list:
+                Toast.makeText(this, "list", 1).show();
+                Intent i2 = new Intent(this, Download2Activity.class);
+                i2.putExtra(Download2Activity.DOWNLOADED, true);
+                startActivity(i2);
                 break;
             default:
                 break;
         }
 
+    }
+    
+    public static boolean isNetWorkOn(Context context) {
+        ConnectivityManager cManager = (ConnectivityManager) context
+                .getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo info = cManager.getActiveNetworkInfo();
+        if (info != null && info.isAvailable()) {
+            return true;
+        } else {
+            return false;
+        }
     }
 
 }

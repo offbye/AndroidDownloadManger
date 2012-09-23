@@ -80,5 +80,16 @@
         android:text="download list"
         android:textSize="18sp" >
     </Button>
+    
+     <Button
+        android:id="@+id/downloaded_list"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:layout_marginRight="4dip"
+        android:gravity="center"
+        android:text="downloaded list"
+        android:textSize="18sp" >
+    </Button>
 
 </LinearLayout>

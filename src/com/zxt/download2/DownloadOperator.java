@@ -166,7 +166,6 @@ public class DownloadOperator extends AsyncTask<Void, Integer, Void> {
             }
         } catch (Exception e) {
             Log.e(TAG, "download exception : " + e.getMessage());
-            e.printStackTrace();
             mDownloadTask.setDownloadState(DownloadState.PAUSE);
             mDownloadTask.setFinishedSize(finishedSize);
             mDlTaskMng.updateDownloadTask(mDownloadTask);
@@ -273,7 +272,10 @@ public class DownloadOperator extends AsyncTask<Void, Integer, Void> {
             }
 
             RandomAccessFile accessFile = new RandomAccessFile(file, "rwd");
-            accessFile.setLength(fileSize);
+            Log.d(TAG, "fileSize:" + fileSize);
+            if(fileSize > 0) {
+                accessFile.setLength(fileSize);
+            }
             accessFile.close();
             conn.disconnect();
         } catch (MalformedURLException e) {

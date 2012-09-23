@@ -53,7 +53,7 @@ public class DownloadingAdapter extends ArrayAdapter<DownloadTask> {
         final ViewHolder holder;
         final DownloadTask task = mTaskList.get(position);
         // if (convertView == null) {
-        convertView = mLayoutInflater.inflate(R.layout.list_item_downloading, null);
+        convertView = mLayoutInflater.inflate(R.layout.download_list_item, null);
         holder = new ViewHolder();
 
         holder.mIcon = (ImageView) convertView.findViewById(R.id.thumbnail);

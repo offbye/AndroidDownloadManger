@@ -160,6 +160,16 @@ public class DownloadTaskManager
         return mDownloadDBHelper.queryAll();
     }
     
+    public List<DownloadTask> getDownloadingTask()
+    {
+        return mDownloadDBHelper.queryUnDownloaded();
+    }
+    
+    public List<DownloadTask> getDownloadedTask()
+    {
+        return mDownloadDBHelper.queryDownloaded();
+    }
+    
     /**
      * 
      * 存入一条下载任务<BR>
