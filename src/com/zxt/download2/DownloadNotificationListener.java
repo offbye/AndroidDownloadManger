@@ -84,7 +84,7 @@ public class DownloadNotificationListener implements DownloadListener {
         notification.contentView.setTextViewText(R.id.notify_text, title);
 
         notification.contentIntent = PendingIntent.getActivity(mContext, 0, new Intent(mContext,
-                Download2Activity.class), PendingIntent.FLAG_UPDATE_CURRENT);
+                DownloadListActivity.class), PendingIntent.FLAG_UPDATE_CURRENT);
         return notification;
 
     }

@@ -7,33 +7,6 @@ package com.zxt.download2;
  * @author zxt
  */
 public class DownloadTask {
-    /**
-     * 下载状态 <BR>
-     * 
-     * @author 杨凡
-     * @version [RCS Client V100R001C03, 2012-2-8]
-     */
-    enum DownloadState {
-        /**
-         * 初始化
-         */
-        INITIALIZE,
-
-        /**
-         * 正在下载中
-         */
-        DOWNLOADING,
-
-        /**
-         * 下载完成
-         */
-        FINISHED,
-
-        /**
-         * 下载暂停状态
-         */
-        PAUSE
-    }
 
     /**
      * 下载地址

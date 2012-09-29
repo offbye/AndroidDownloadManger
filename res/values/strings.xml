@@ -19,6 +19,12 @@
     <string name="download_notification">一个下载任务已完成</string>
     <string name="download_click_notify">点击查看下载列表</string>
     <string name="downloading_msg">正在下载…</string>
+    <string name="download_task_added">一个下载任务已经加入下载队列</string>
+    <string name="download_invalid_url">无效的下载地址</string>
     <string name="downloaded_installed">已安装</string>
+    <string name="download_delete_task">删除下载任务</string>
+    <string name="download_delete_task_file">删除任务和已下载文件</string>
+    <string name="download_deleted_task_ok">已删除下载任务</string>
+    <string name="download_deleted_task_file_ok">已删除下载任务和已下载文件</string>
 
 </resources>

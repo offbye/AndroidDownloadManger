@@ -1,11 +1,6 @@
 
 package com.zxt.download2;
 
-import com.zxt.download2.DownloadTask.DownloadState;
-
-import android.os.AsyncTask;
-import android.util.Log;
-
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -16,6 +11,9 @@ import java.net.ProtocolException;
 import java.net.URL;
 import java.util.Collections;
 import java.util.Set;
+
+import android.os.AsyncTask;
+import android.util.Log;
 
 /**
  * 下载操作类 <BR>

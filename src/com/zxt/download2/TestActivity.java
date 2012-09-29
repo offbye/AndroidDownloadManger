@@ -118,7 +118,7 @@ public class TestActivity extends Activity implements OnClickListener {
                 DownloadTaskManager.getInstance(this).startDownload(downloadTask4);
                 final Notification n = addNotifiction(downloadTask4.getTitle());
                 final int nid = downloadTask4.getUrl().hashCode();
-                DownloadTaskManager.getInstance(this).addListener(downloadTask4, new DownloadNotificationListener(mContext, downloadTask4));
+                //DownloadTaskManager.getInstance(this).addListener(downloadTask4, new DownloadNotificationListener(mContext, downloadTask4));
                 break;
             case R.id.download_add5:
                 DownloadTask downloadTask5 = new DownloadTask(
@@ -143,14 +143,14 @@ public class TestActivity extends Activity implements OnClickListener {
 
             case R.id.download_list:
                 Toast.makeText(this, "list", 1).show();
-                Intent i = new Intent(this, Download2Activity.class);
-                i.putExtra(Download2Activity.DOWNLOADED, false);
+                Intent i = new Intent(this, DownloadListActivity.class);
+                i.putExtra(DownloadListActivity.DOWNLOADED, false);
                 startActivity(i);
                 break;
             case R.id.downloaded_list:
                 Toast.makeText(this, "list", 1).show();
-                Intent i2 = new Intent(this, Download2Activity.class);
-                i2.putExtra(Download2Activity.DOWNLOADED, true);
+                Intent i2 = new Intent(this, DownloadListActivity.class);
+                i2.putExtra(DownloadListActivity.DOWNLOADED, true);
                 startActivity(i2);
                 break;
             default:
@@ -186,7 +186,7 @@ public class TestActivity extends Activity implements OnClickListener {
         notification.contentView.setTextViewText(R.id.notify_text, title);
 
         notification.contentIntent = PendingIntent.getActivity(this, 0, new Intent(this,
-                Download2Activity.class), 0);
+                DownloadListActivity.class), 0);
         return notification;
 
     }

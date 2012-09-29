@@ -23,13 +23,13 @@ public class DownloadingAdapter extends ArrayAdapter<DownloadTask> {
 
     private List<DownloadTask> mTaskList;
 
-    private Download2Activity mContext;
+    private DownloadListActivity mContext;
 
     private String downloadingMsg;
 
     private HashMap<String, Boolean> addedList = new HashMap<String, Boolean>();
 
-    public DownloadingAdapter(Download2Activity context, int textViewResourceId,
+    public DownloadingAdapter(DownloadListActivity context, int textViewResourceId,
             List<DownloadTask> taskList) {
         super(context, textViewResourceId, taskList);
         mTaskList = taskList;
