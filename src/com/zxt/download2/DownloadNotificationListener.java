@@ -17,6 +17,8 @@ public class DownloadNotificationListener implements DownloadListener {
 
     private NotificationManager mNotificationManager;
 
+    private int mProgress = 0;
+
     public DownloadNotificationListener(Context context, DownloadTask task) {
         mContext = context;
         mId = task.getUrl().hashCode();
@@ -40,40 +42,56 @@ public class DownloadNotificationListener implements DownloadListener {
 
     @Override
     public void onDownloadProgress(int finishedSize, int totalSize, double progressPercent) {
-        mNotification.contentView.setTextViewText(R.id.notify_state,
-                mContext.getString(R.string.downloading_msg) + (int) Math.round(progressPercent)
-                        + "%");
-        mNotification.contentView.setProgressBar(R.id.notify_processbar, 100,
-                (int) Math.round(progressPercent), false);
-        mNotificationManager.notify(mId, mNotification);
+        if (progressPercent - mProgress > 1) { // 降低状态栏进度刷新频率，性能问题
+            mProgress = (int) Math.round(progressPercent);
+            mNotification.contentView.setTextViewText(R.id.notify_state,
+                    mContext.getString(R.string.downloading_msg) + mProgress + "%");
+            mNotification.contentView.setProgressBar(R.id.notify_processbar, 100,
+                    (int) Math.round(progressPercent), false);
+            mNotificationManager.notify(mId, mNotification);
+        }
     }
 
     @Override
     public void onDownloadPause() {
         mNotification.contentView.setTextViewText(R.id.notify_state,
                 mContext.getString(R.string.download_paused));
+        mNotification.contentView.setProgressBar(R.id.notify_processbar, 100, 0, true);
         mNotificationManager.notify(mId, mNotification);
     }
 
     @Override
     public void onDownloadFinish(String filepath) {
+        mNotification.icon = android.R.drawable.stat_sys_download_done;
         mNotification.contentView.setTextViewText(R.id.notify_state,
                 mContext.getString(R.string.download_finished));
+        mNotification.contentView.setProgressBar(R.id.notify_processbar, 100, 100, false);
+        mNotification.flags |= Notification.FLAG_AUTO_CANCEL;
+        mNotification.defaults |= Notification.DEFAULT_SOUND;
+        mNotification.defaults |= Notification.DEFAULT_LIGHTS;
+        
+        Intent intent = new Intent(mContext, DownloadListActivity.class);
+        intent.putExtra("isDownloaded", true);
+
+        mNotification.contentIntent = PendingIntent.getActivity(mContext, 0, intent,
+                PendingIntent.FLAG_UPDATE_CURRENT);
         mNotificationManager.notify(mId, mNotification);
+        // Toast.makeText(mContext,
+        // String.format(mContext.getString(R.string.downloaded_file),
+        // filepath), Toast.LENGTH_LONG).show();
     }
 
     @Override
     public void onDownloadFail() {
         mNotification.contentView.setTextViewText(R.id.notify_state,
                 mContext.getString(R.string.download_failed));
+        mNotification.contentView.setProgressBar(R.id.notify_processbar, 100, 0, true);
         mNotificationManager.notify(mId, mNotification);
-        mNotificationManager.cancel(mId);
     }
 
     public Notification initNotifiction(String title) {
-        Notification notification = new Notification(R.drawable.ic_download_ing,
+        Notification notification = new Notification(android.R.drawable.stat_sys_download,
                 mContext.getString(R.string.downloading_msg) + title, System.currentTimeMillis());
-        notification.icon = R.drawable.ic_download_ing;
 
         notification.contentView = new RemoteViews(mContext.getPackageName(),
                 R.layout.download_notify);

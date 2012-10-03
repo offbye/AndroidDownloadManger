@@ -2,7 +2,7 @@
 <resources>
 
     <string name="hello">Hello World, Download2Activity!</string>
-    <string name="app_name">Download2</string>
+    <string name="app_name">Download Manager</string>
     <!-- 下载模块 -->
     <string name="download_manager">下载管理</string>
     <string name="download_install">安装</string>

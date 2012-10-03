@@ -38,7 +38,6 @@ public class TestActivity extends Activity implements OnClickListener {
         findViewById(R.id.download_list).setOnClickListener(this);
         findViewById(R.id.downloaded_list).setOnClickListener(this);
 
-        mNotificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
         DownloadListener mDownLoadListener = new DownloadListener() {
             @Override
             public void onDownloadFinish(String filepath) {
@@ -100,35 +99,37 @@ public class TestActivity extends Activity implements OnClickListener {
 
             case R.id.download_add3:
                 DownloadTask downloadTask3 = new DownloadTask(
-                        "http://mirror.bit.edu.cn/apache/buildr/1.4.7/buildr-1.4.7.zip");
-                downloadTask3.setFileName("axis3.zip");
-                downloadTask3.setTitle("axis3");
+                        "http://f.youku.com/player/getFlvPath/sid/00_00/st/flv/fileid/0300020100500279A8EDF201FB2AC9CED4C7EB-F1FB-4534-271A-55641E7C9F00?K=53d7cd473c48d14928280838,k2:1b49ac957c23135ef");
+                downloadTask3.setFileName("骑车去伦敦-一个梦想照进现实的故事.flv");
+                downloadTask3.setTitle("骑车去伦敦-一个梦想照进现实的故事.flv");
                 downloadTask3.setFilePath("/sdcard/");
 
                 DownloadTaskManager.getInstance(this).startDownload(downloadTask3);
+                DownloadTaskManager.getInstance(this).addListener(downloadTask3,
+                        new DownloadNotificationListener(mContext, downloadTask3));
                 break;
 
             case R.id.download_add4:
                 DownloadTask downloadTask4 = new DownloadTask(
-                        "http://mirror.bit.edu.cn/apache/empire-db/2.4.0/apache-empire-db-2.4.0-dist.zip");
-                downloadTask4.setFileName("axis4.zip");
-                downloadTask4.setTitle("axis4");
+                        "http://f.youku.com/player/getFlvPath/sid/00_00/st/flv/fileid/03000201004F9583B02DC700FC8CA43B252233-0E5F-9E51-80B6-7BD6084094C9?K=e411d5183fd588e724112818,k2:1e45a2103b6b6f972");
+                downloadTask4.setFileName("《摩尔庄园2海妖宝藏》预告 黄渤王珞丹献声3D进军暑期档.flv");
+                downloadTask4.setTitle("《摩尔庄园2海妖宝藏》预告 黄渤王珞丹献声3D进军暑期档.flv");
                 downloadTask4.setFilePath("/sdcard/");
 
                 DownloadTaskManager.getInstance(this).startDownload(downloadTask4);
-                final Notification n = addNotifiction(downloadTask4.getTitle());
-                final int nid = downloadTask4.getUrl().hashCode();
-                //DownloadTaskManager.getInstance(this).addListener(downloadTask4, new DownloadNotificationListener(mContext, downloadTask4));
+                DownloadTaskManager.getInstance(this).addListener(downloadTask4,
+                        new DownloadNotificationListener(mContext, downloadTask4));
                 break;
             case R.id.download_add5:
                 DownloadTask downloadTask5 = new DownloadTask(
-                        "http://mirror.bit.edu.cn/apache/gora/0.2.1/apache-gora-0.2.1-src.zip");
-                downloadTask5.setFileName("axis5.zip");
-                downloadTask5.setTitle("axis5");
+                        "http://f.youku.com/player/getFlvPath/sid/00_00/st/flv/fileid/0300020100505A7B45AD42061A186666286CC5-D7C8-D5ED-D564-25FE9D457D5C?K=f15c750e224f337a261c9827,k2:1aa0d089ebbe44422");
+                downloadTask5.setFileName("qufen.flv");
+                downloadTask5.setTitle("《飓风营救2》发中文预告 为家人血战引发讨论.flv");
                 downloadTask5.setFilePath("/sdcard/");
 
                 DownloadTaskManager.getInstance(this).startDownload(downloadTask5);
-                DownloadTaskManager.getInstance(this).addListener(downloadTask5, new DownloadNotificationListener(mContext, downloadTask5));
+                DownloadTaskManager.getInstance(this).addListener(downloadTask5,
+                        new DownloadNotificationListener(mContext, downloadTask5));
 
                 break;
             case R.id.download_add6:
@@ -139,6 +140,8 @@ public class TestActivity extends Activity implements OnClickListener {
                 downloadTask6.setFilePath("/sdcard/");
 
                 DownloadTaskManager.getInstance(this).startDownload(downloadTask6);
+                DownloadTaskManager.getInstance(this).addListener(downloadTask6,
+                        new DownloadNotificationListener(mContext, downloadTask6));
                 break;
 
             case R.id.download_list:
@@ -164,31 +167,11 @@ public class TestActivity extends Activity implements OnClickListener {
                 .getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo info = cManager.getActiveNetworkInfo();
         if (info != null && info.isAvailable()) {
+            info.getTypeName();
             return true;
         } else {
             return false;
         }
-    }
-
-    private NotificationManager mNotificationManager = null;
-
-    public Notification addNotifiction(String title) {
-        Notification notification = new Notification(R.drawable.ic_download_ing,
-                getString(R.string.downloading_msg), System.currentTimeMillis());
-        notification.icon = R.drawable.ic_download_ing;
-
-        notification.contentView = new RemoteViews(getApplication().getPackageName(),
-                R.layout.download_notify);
-        notification.contentView.setProgressBar(R.id.notify_processbar, 100, 0, false);
-        notification.contentView.setTextViewText(R.id.notify_state,
-                getString(R.string.downloading_msg));
-
-        notification.contentView.setTextViewText(R.id.notify_text, title);
-
-        notification.contentIntent = PendingIntent.getActivity(this, 0, new Intent(this,
-                DownloadListActivity.class), 0);
-        return notification;
-
     }
 
 }

@@ -4,8 +4,8 @@
     android:layout_height="fill_parent"
     android:gravity="center_vertical"
     android:orientation="horizontal"
-    android:paddingLeft="10.0dip"
-    android:paddingRight="10.0dip" >
+    android:layout_marginLeft="10.0dip"
+    android:layout_marginRight="10.0dip" >
 
     <ImageView
         android:id="@+id/noitfy_icon"
@@ -20,7 +20,8 @@
         android:gravity="center_vertical"
         android:orientation="vertical"
         android:paddingLeft="5.0dip"
-        android:paddingRight="5.0dip" >
+        android:paddingRight="5.0dip"
+        android:layout_marginLeft="20dp">
 
         <TextView
             android:id="@+id/notify_text"
@@ -29,7 +30,8 @@
             android:layout_marginLeft="2.0dip"
             android:ellipsize="end"
             android:singleLine="true"
-            android:text="" />
+            android:textSize="16sp"
+            android:textColor="#ffffffff"/>
 
         <TextView
             android:id="@+id/notify_state"
@@ -41,7 +43,8 @@
             android:id="@+id/notify_processbar"
             style="?android:attr/progressBarStyleHorizontal"
             android:layout_width="fill_parent"
-            android:layout_height="wrap_content" />
+            android:layout_height="10.0dip"
+            android:progressDrawable="@drawable/download_progressbar"/>
     </LinearLayout>
 
 </LinearLayout>
