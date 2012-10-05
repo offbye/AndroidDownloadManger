@@ -66,15 +66,20 @@ public class DownloadingAdapter extends ArrayAdapter<DownloadTask> {
 
         // ImageUtil.loadImage(holder.mIcon, task.getThumbnail());
 
-        if (task.getTotalSize() > 0) {
-            holder.mProgressBar.setProgress(task.getFinishedSize() * 100 / task.getTotalSize());
+        if (task.getPercent() > 0) {
+            holder.mProgressBar.setProgress((int)task.getPercent());
         }
 
         switch (mTaskList.get(position).getDownloadState()) {
 
             case PAUSE:
-                holder.mStatusText.setText(R.string.download_stopped);
+                holder.mStatusText.setText(R.string.download_paused);
                 holder.mStateImageView.setImageResource(R.drawable.ic_download_ing);
+                holder.mProgressBar.setIndeterminate(true);
+                break;
+            case FAILED:
+                holder.mStatusText.setText(R.string.download_failed);
+                holder.mStateImageView.setImageResource(R.drawable.ic_download_retry);
                 holder.mProgressBar.setIndeterminate(true);
                 break;
             case DOWNLOADING:
@@ -84,10 +89,12 @@ public class DownloadingAdapter extends ArrayAdapter<DownloadTask> {
                 break;
             case FINISHED:
                 holder.mProgressBar.setProgress(100);
-                holder.mStatusText.setText(R.string.download_downloaded);
-                // holder.mImageView.setImageResource(R.drawable.download_play);
+                holder.mProgressBar.setIndeterminate(false);
+                holder.mStatusText.setText(R.string.download_finished);
+                holder.mStateImageView.setImageResource(R.drawable.download_finished_do);
                 break;
             case INITIALIZE:
+                holder.mProgressBar.setIndeterminate(false);
                 holder.mStatusText.setText(R.string.download_initial);
                 holder.mStateImageView.setImageResource(R.drawable.ic_download_ing);
                 break;

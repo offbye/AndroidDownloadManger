@@ -1,6 +1,9 @@
 
 package com.zxt.download2;
 
+import android.text.TextUtils;
+import android.webkit.URLUtil;
+
 /**
  * 下载任务类
  * 
@@ -56,23 +59,25 @@ public class DownloadTask {
     /**
      * 已完成百分比
      */
-    private double dlPercent;
+    private int percent;
 
     /**
      * 下载的状态
      */
     private volatile DownloadState downloadState;
 
-    /**
-     * 构造函数
-     * 
-     * @param url 文件下载地址（必须）
-     */
-    public DownloadTask(String url) {
-        if (url == null || url.trim().length() == 0) {
-            throw new IllegalArgumentException("the input url is null or invalid.");
+    public DownloadTask(String url, String filePath, String fileName, String title, String thumbnail) {
+        if (!URLUtil.isHttpUrl(url)) {
+            throw new IllegalArgumentException("invalid url,nust start with http://");
+        }
+        if (TextUtils.isEmpty(fileName)) {
+            throw new IllegalArgumentException("invalid fileName");
         }
         this.url = url;
+        this.fileName = fileName;
+        this.title = title;
+        this.thumbnail = thumbnail;
+        this.filePath = filePath;
     }
 
     /**
@@ -166,21 +171,21 @@ public class DownloadTask {
     }
 
     /**
-     * get dlPercent
+     * get percent
      * 
-     * @return the dlPercent
+     * @return the percent
      */
-    public double getDlPercent() {
-        return dlPercent;
+    public double getPercent() {
+        return percent;
     }
 
     /**
-     * set dlPercent
+     * set percent
      * 
      * @param dlPercent the dlPercent to set
      */
-    public void setDlPercent(double dlPercent) {
-        this.dlPercent = dlPercent;
+    public void setPercent(int percent) {
+        this.percent = percent;
     }
 
     /**
@@ -206,6 +211,7 @@ public class DownloadTask {
         final int prime = 31;
         int result = 1;
         result = prime * result + ((fileName == null) ? 0 : fileName.hashCode());
+        result = prime * result + ((filePath == null) ? 0 : filePath.hashCode());
         result = prime * result + ((url == null) ? 0 : url.hashCode());
         return result;
     }
@@ -224,12 +230,24 @@ public class DownloadTask {
                 return false;
         } else if (!fileName.equals(other.fileName))
             return false;
+        if (filePath == null) {
+            if (other.filePath != null)
+                return false;
+        } else if (!filePath.equals(other.filePath))
+            return false;
         if (url == null) {
             if (other.url != null)
                 return false;
         } else if (!url.equals(other.url))
             return false;
         return true;
+    }
+
+    @Override
+    public String toString() {
+        return "DownloadTask [url=" + url + ", finishedSize=" + finishedSize + ", totalSize="
+                + totalSize + ", dlPercent=" + percent + ", downloadState=" + downloadState
+                + ", fileName=" + fileName + ", title=" + title + "]";
     }
 
 }

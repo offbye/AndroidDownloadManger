@@ -8,8 +8,8 @@ import android.webkit.URLUtil;
 
 import java.io.File;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
+import java.util.concurrent.CopyOnWriteArraySet;
 
 /**
  * 下载任务管理类，单例模式<BR>
@@ -43,7 +43,7 @@ public class DownloadTaskManager {
      */
     private HashMap<DownloadTask, DownloadOperator> mDownloadMap;
 
-    private HashMap<DownloadTask, HashSet<DownloadListener>> mDownloadListenerMap;
+    private HashMap<DownloadTask, CopyOnWriteArraySet<DownloadListener>> mDownloadListenerMap;
 
     /**
      * 私有默认构造
@@ -52,7 +52,7 @@ public class DownloadTaskManager {
      */
     private DownloadTaskManager(Context context) {
         mDownloadMap = new HashMap<DownloadTask, DownloadOperator>();
-        mDownloadListenerMap = new HashMap<DownloadTask, HashSet<DownloadListener>>();
+        mDownloadListenerMap = new HashMap<DownloadTask, CopyOnWriteArraySet<DownloadListener>>();
         // 数据库操作对象实例化
         mDownloadDBHelper = new DownloadDBHelper(context, "download.db");
     }
@@ -98,7 +98,7 @@ public class DownloadTaskManager {
         }
 
         if (null == mDownloadListenerMap.get(downloadTask)) {
-            HashSet<DownloadListener> set = new HashSet<DownloadListener>(5);
+            CopyOnWriteArraySet<DownloadListener> set = new CopyOnWriteArraySet<DownloadListener>();
             mDownloadListenerMap.put(downloadTask, set);
         }
 
@@ -134,11 +134,38 @@ public class DownloadTaskManager {
      * @param downloadTask DownloadTask
      */
     public void continueDownload(DownloadTask downloadTask) {
-        /*
-         * 由于DownloadOperator继承自AsyncTask,其execute方法只能被执行一次，
-         * 因此在继续下载时需要重新创建DownloadOperator对象进行下载操作
-         */
-        startDownload(downloadTask);
+        if (downloadTask.getFilePath() == null || downloadTask.getFilePath().trim().length() == 0) {
+            Log.w(TAG, "file path is invalid. file path : " + downloadTask.getFilePath()
+                    + ", use default file path : " + DEFAULT_FILE_PATH);
+            downloadTask.setFilePath(DEFAULT_FILE_PATH);
+        }
+
+        if (downloadTask.getFileName() == null || downloadTask.getFileName().trim().length() == 0) {
+            Log.w(TAG, "file name is invalid. file name : " + downloadTask.getFileName());
+            throw new IllegalArgumentException("file name is invalid");
+        }
+        
+        if (null == downloadTask.getUrl() || !URLUtil.isHttpUrl(downloadTask.getUrl())) {
+            Log.w(TAG, "invalid http url: " + downloadTask.getUrl());
+            throw new IllegalArgumentException("invalid http url");
+        }
+        
+        if (null == mDownloadListenerMap.get(downloadTask)) {
+            CopyOnWriteArraySet<DownloadListener> set = new CopyOnWriteArraySet<DownloadListener>();
+            mDownloadListenerMap.put(downloadTask, set);
+        }
+
+        downloadTask.setDownloadState(DownloadState.INITIALIZE);
+
+        // save to database if the download task is valid, and start download.
+        if (!downloadTask.equals(queryDownloadTask(downloadTask.getUrl()))) {
+            insertDownloadTask(downloadTask);
+        }
+
+        DownloadOperator dlOperator = new DownloadOperator(this, downloadTask);
+        mDownloadMap.put(downloadTask, dlOperator);
+        dlOperator.startDownload();
+
     }
 
     /**
@@ -220,19 +247,27 @@ public class DownloadTaskManager {
         return mDownloadMap.containsKey(downloadTask);
     }
 
-    public HashSet<DownloadListener> getListeners(DownloadTask downloadTask) {
-        return mDownloadListenerMap.get(downloadTask);
+    public CopyOnWriteArraySet<DownloadListener> getListeners(DownloadTask downloadTask) {
+        if(null != mDownloadListenerMap.get(downloadTask)){
+            return mDownloadListenerMap.get(downloadTask);
+        } else {
+            return new CopyOnWriteArraySet<DownloadListener>();//avoid null pointer exception
+        }
     }
 
-    public void addListener(DownloadTask downloadTask, DownloadListener listener) {
+    public void registerListener(DownloadTask downloadTask, DownloadListener listener) {
         if (null != mDownloadListenerMap.get(downloadTask)) {
             mDownloadListenerMap.get(downloadTask).add(listener);
             Log.d(TAG, downloadTask.getFileName() + " addListener ");
         } else {
-            HashSet<DownloadListener> set = new HashSet<DownloadListener>(5);
+            CopyOnWriteArraySet<DownloadListener> set = new CopyOnWriteArraySet<DownloadListener>();
             mDownloadListenerMap.put(downloadTask, set);
             mDownloadListenerMap.get(downloadTask).add(listener);
         }
+    }
+    
+    public void removeListener(DownloadTask downloadTask) {
+        mDownloadListenerMap.remove(downloadTask);
     }
 
     public boolean deleteFile(String filePath) {

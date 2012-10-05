@@ -41,9 +41,9 @@ public class DownloadNotificationListener implements DownloadListener {
     }
 
     @Override
-    public void onDownloadProgress(int finishedSize, int totalSize, double progressPercent) {
+    public void onDownloadProgress(int finishedSize, int totalSize, int progressPercent) {
         if (progressPercent - mProgress > 1) { // 降低状态栏进度刷新频率，性能问题
-            mProgress = (int) Math.round(progressPercent);
+            mProgress =  progressPercent;
             mNotification.contentView.setTextViewText(R.id.notify_state,
                     mContext.getString(R.string.downloading_msg) + mProgress + "%");
             mNotification.contentView.setProgressBar(R.id.notify_processbar, 100,

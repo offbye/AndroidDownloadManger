@@ -1,19 +1,17 @@
 
 package com.zxt.download2;
 
+import android.os.AsyncTask;
+import android.util.Log;
+
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.RandomAccessFile;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
-import java.net.ProtocolException;
 import java.net.URL;
-import java.util.Collections;
-import java.util.Set;
-
-import android.os.AsyncTask;
-import android.util.Log;
 
 /**
  * 下载操作类 <BR>
@@ -21,6 +19,10 @@ import android.util.Log;
  * @author zxt
  */
 public class DownloadOperator extends AsyncTask<Void, Integer, Void> {
+
+    private static final int BUFFER_SIZE = 8192;
+
+    private static final int UPDATE_DB_PER_SIZE = 102400;
 
     /**
      * debug tag
@@ -47,7 +49,6 @@ public class DownloadOperator extends AsyncTask<Void, Integer, Void> {
      */
     private volatile boolean mStop = false;
 
-    private Set<DownloadListener> downloadListeners;
 
     /**
      * Constructor
@@ -62,7 +63,6 @@ public class DownloadOperator extends AsyncTask<Void, Integer, Void> {
         Log.d(TAG, "file path : " + mDownloadTask.getFilePath());
         Log.d(TAG, "file name : " + mDownloadTask.getFileName());
         Log.d(TAG, "download url : " + mDownloadTask.getUrl());
-        downloadListeners = Collections.synchronizedSet(mDlTaskMng.getListeners(downloadTask));
     }
 
     /**
@@ -80,7 +80,7 @@ public class DownloadOperator extends AsyncTask<Void, Integer, Void> {
         mDownloadTask.setDownloadState(DownloadState.DOWNLOADING);
         mDlTaskMng.updateDownloadTask(mDownloadTask);
 
-        for (DownloadListener l : downloadListeners) {
+        for (DownloadListener l : mDlTaskMng.getListeners(mDownloadTask)) {
             l.onDownloadStart();
         }
 
@@ -96,6 +96,8 @@ public class DownloadOperator extends AsyncTask<Void, Integer, Void> {
             conn.setRequestMethod("GET");
             conn.setRequestProperty("Range", "bytes=" + mDownloadTask.getFinishedSize() + "-"
                     + mDownloadTask.getTotalSize());
+            //conn.setRequestProperty("User-Agent", "Mozilla/4.0 (compatible; MSIE 8.0; Windows NT 5.2; Trident/4.0; .NET CLR 1.1.4322; .NET CLR 2.0.50727; .NET CLR 3.0.04506.30; .NET CLR 3.0.4506.2152; .NET CLR 3.5.30729)");
+            conn.setRequestProperty("Connection", "Keep-Alive");
 
             accessFile = new RandomAccessFile(mDownloadTask.getFilePath() + "/"
                     + mDownloadTask.getFileName(), "rwd");
@@ -105,11 +107,11 @@ public class DownloadOperator extends AsyncTask<Void, Integer, Void> {
             totalSize = mDownloadTask.getTotalSize();
 
             is = conn.getInputStream();
-            Log.d(TAG, "downloadListeners size=" + downloadListeners.size());
+            Log.d(TAG, "downloadListeners size=" +  mDlTaskMng.getListeners(mDownloadTask).size());
 
             Log.i(TAG, "start writing data to file.");
-            int size = totalSize / 200 > 102400 ? 102400 : totalSize / 200; //降低刷新频率，下载100k刷新一次页面
-            byte[] buffer = new byte[4096];
+            //int size = totalSize / 200 > UPDATE_DB_PER_SIZE ? UPDATE_DB_PER_SIZE : totalSize / 200; //降低刷新频率，下载100k刷新一次页面
+            byte[] buffer = new byte[BUFFER_SIZE];
             int length = -1;
             while ((length = is.read(buffer)) != -1) {
                 // pause download
@@ -119,7 +121,7 @@ public class DownloadOperator extends AsyncTask<Void, Integer, Void> {
                     mDownloadTask.setFinishedSize(finishedSize);
                     mDlTaskMng.updateDownloadTask(mDownloadTask);
 
-                    for (DownloadListener l : downloadListeners) {
+                    for (DownloadListener l : mDlTaskMng.getListeners(mDownloadTask)) {
                         l.onDownloadPause();
                     }
                     return null;
@@ -130,7 +132,7 @@ public class DownloadOperator extends AsyncTask<Void, Integer, Void> {
                     Log.i(TAG, "stop download, exit download loop and delete download task.");
                     mDlTaskMng.deleteDownloadTask(mDownloadTask);
 
-                    for (DownloadListener l : downloadListeners) {
+                    for (DownloadListener l : mDlTaskMng.getListeners(mDownloadTask)) {
                         l.onDownloadStop();
                     }
 
@@ -140,34 +142,34 @@ public class DownloadOperator extends AsyncTask<Void, Integer, Void> {
                 finishedSize += length;
                 accessFile.write(buffer, 0, length);
 
-                // update database per 10K.
-                if (finishedSize - mDownloadTask.getFinishedSize() > 10240) {
+                // update database per 100K.
+                if (finishedSize - mDownloadTask.getFinishedSize() > UPDATE_DB_PER_SIZE) {
                     mDownloadTask.setFinishedSize(finishedSize);
                     mDlTaskMng.updateDownloadTask(mDownloadTask);
-                }
-                
-
-                if (finishedSize - mDownloadTask.getFinishedSize() > mDownloadTask.getTotalSize() / size) {
-
-                    // update progress.
+                    publishProgress(finishedSize, totalSize);
+                } else if (totalSize - finishedSize < UPDATE_DB_PER_SIZE) {//如果剩余下载不足UPDATE_DB_PER_SIZE则继续发出通知
+                    mDownloadTask.setFinishedSize(finishedSize);
                     publishProgress(finishedSize, totalSize);
                 }
+
             }
 
             mDownloadTask.setDownloadState(DownloadState.FINISHED);
             mDownloadTask.setFinishedSize(finishedSize);
-            mDlTaskMng.updateDownloadTask(mDownloadTask);
-
-            for (DownloadListener l : downloadListeners) {
+            Log.d(TAG, "finished " +  mDownloadTask);
+            for (DownloadListener l : mDlTaskMng.getListeners(mDownloadTask)) {
                 l.onDownloadFinish(mDownloadTask.getFilePath() + "/" + mDownloadTask.getFileName());
             }
+            mDlTaskMng.updateDownloadTask(mDownloadTask);
+            mDlTaskMng.removeListener(mDownloadTask);
+            
         } catch (Exception e) {
             Log.e(TAG, "download exception : " + e.getMessage());
-            mDownloadTask.setDownloadState(DownloadState.PAUSE);
+            mDownloadTask.setDownloadState(DownloadState.FAILED);
             mDownloadTask.setFinishedSize(finishedSize);
             mDlTaskMng.updateDownloadTask(mDownloadTask);
 
-            for (DownloadListener l : downloadListeners) {
+            for (DownloadListener l : mDlTaskMng.getListeners(mDownloadTask)) {
                 l.onDownloadFail();
             }
 
@@ -203,8 +205,8 @@ public class DownloadOperator extends AsyncTask<Void, Integer, Void> {
         int finished = values[0];
         int total = values[1];
 
-        for (DownloadListener l : downloadListeners) {
-            l.onDownloadProgress(finished, total, Math.ceil(finished * 100 / total));
+        for (DownloadListener l : mDlTaskMng.getListeners(mDownloadTask)) {
+            l.onDownloadProgress(finished, total, Math.round(finished * 100 / total));
         }
     }
 
@@ -250,16 +252,19 @@ public class DownloadOperator extends AsyncTask<Void, Integer, Void> {
      * 创建文件 <BR>
      */
     private void createFile() {
-
+        HttpURLConnection conn = null;
+        RandomAccessFile accessFile = null;
         try {
             URL url = new URL(mDownloadTask.getUrl());
-            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+            conn = (HttpURLConnection) url.openConnection();
             conn.setConnectTimeout(5000);
             conn.setRequestMethod("GET");
 
             int fileSize = conn.getContentLength();
             Log.d(TAG, "total size[" + fileSize + "]");
             mDownloadTask.setTotalSize(fileSize);
+            conn.disconnect();
+
             File file = new File(mDownloadTask.getFilePath() + "/" + mDownloadTask.getFileName());
             if (!file.exists()) {
                 file.createNewFile();
@@ -268,23 +273,25 @@ public class DownloadOperator extends AsyncTask<Void, Integer, Void> {
                 mDownloadTask.setFinishedSize(0);
             }
 
-            RandomAccessFile accessFile = new RandomAccessFile(file, "rwd");
+            accessFile = new RandomAccessFile(file, "rwd");
             Log.d(TAG, "fileSize:" + fileSize);
             if(fileSize > 0) {
                 accessFile.setLength(fileSize);
             }
             accessFile.close();
-            conn.disconnect();
         } catch (MalformedURLException e) {
-            e.printStackTrace();
-        } catch (ProtocolException e) {
-            e.printStackTrace();
+            Log.e(TAG, "createFile MalformedURLException",e);
+        } catch (FileNotFoundException e) {
+            Log.e(TAG, "createFile FileNotFoundException",e);
+            for (DownloadListener l : mDlTaskMng.getListeners(mDownloadTask)) {
+                l.onDownloadFail();
+            }
         } catch (IOException e) {
-            e.printStackTrace();
-        }
+            Log.e(TAG, "createFile IOException",e);
+            for (DownloadListener l : mDlTaskMng.getListeners(mDownloadTask)) {
+                l.onDownloadFail();
+            }
+        } 
     }
 
-    public void addDownloadListener(DownloadListener downloadListener) {
-        this.downloadListeners.add(downloadListener);
-    }
 }

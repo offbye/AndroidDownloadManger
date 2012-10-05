@@ -7,15 +7,16 @@ package com.zxt.download2;
  */
 public enum DownloadState {
     /**
-     * 初始化
+     * init
      */
     INITIALIZE,
 
     /**
-     * 正在下载中
+     * downloading
      */
     DOWNLOADING,
-
+    
+    FAILED,
     /**
      * 下载完成
      */

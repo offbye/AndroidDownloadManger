@@ -6,7 +6,6 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -23,7 +22,7 @@ import java.util.List;
 public class DownloadListActivity extends Activity implements OnClickListener {
     public static final String DOWNLOADED = "isDownloaded";
 
-    private static final String TAG = "Download2Activity";
+    private static final String TAG = "DownloadListActivity";
 
     private ListView mDownloadingListView;
 
@@ -126,12 +125,17 @@ public class DownloadListActivity extends Activity implements OnClickListener {
                 DownloadTask task = mDownloadinglist.get(arg2);
                 switch (task.getDownloadState()) {
                     case PAUSE:
-                        Log.i(TAG, "continue " + task.getFileName());
+                        Log.i(TAG, "PAUSE continue " + task.getFileName());
                         DownloadTaskManager.getInstance(mContext).continueDownload(task);
-                        addListener(task);
+                        //addListener(task);
+                        break;
+                    case FAILED:
+                        Log.i(TAG, "FAILED continue " + task.getFileName());
+                        DownloadTaskManager.getInstance(mContext).continueDownload(task);
+                        //addListener(task);
                         break;
                     case DOWNLOADING:
-                        Log.i(TAG, "pause " + task.getFileName());
+                        Log.i(TAG, "DOWNLOADING pause " + task.getFileName());
                         DownloadTaskManager.getInstance(mContext).pauseDownload(task);
 
                         break;
@@ -221,6 +225,8 @@ public class DownloadListActivity extends Activity implements OnClickListener {
         public void onDownloadFinish(String filepath) {
             Log.d(TAG, "onDownloadFinish");
             task.setDownloadState(DownloadState.FINISHED);
+            task.setFinishedSize(task.getFinishedSize());
+            task.setPercent(100);
             DownloadListActivity.this.runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
@@ -268,7 +274,7 @@ public class DownloadListActivity extends Activity implements OnClickListener {
         @Override
         public void onDownloadFail() {
             Log.d(TAG, "onDownloadFail");
-            task.setDownloadState(DownloadState.PAUSE);
+            task.setDownloadState(DownloadState.FAILED);
             DownloadListActivity.this.runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
@@ -279,12 +285,12 @@ public class DownloadListActivity extends Activity implements OnClickListener {
 
         @Override
         public void onDownloadProgress(final int finishedSize, final int totalSize,
-                double progressPercent) {
+                int progressPercent) {
             // Log.d(TAG, "download " + finishedSize);
             task.setDownloadState(DownloadState.DOWNLOADING);
             task.setFinishedSize(finishedSize);
             task.setTotalSize(totalSize);
-            task.setDlPercent(progressPercent);
+            task.setPercent(progressPercent);
 
             DownloadListActivity.this.runOnUiThread(new Runnable() {
                 @Override
@@ -296,7 +302,7 @@ public class DownloadListActivity extends Activity implements OnClickListener {
     }
 
     public void addListener(DownloadTask task) {
-        DownloadTaskManager.getInstance(mContext).addListener(task, new MyDownloadListener(task));
+        DownloadTaskManager.getInstance(mContext).registerListener(task, new MyDownloadListener(task));
     }
 
     @Override
