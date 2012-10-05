@@ -175,7 +175,7 @@ public class DownloadTask {
      * 
      * @return the percent
      */
-    public double getPercent() {
+    public int getPercent() {
         return percent;
     }
 

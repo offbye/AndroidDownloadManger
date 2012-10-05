@@ -41,13 +41,13 @@ public class DownloadNotificationListener implements DownloadListener {
     }
 
     @Override
-    public void onDownloadProgress(int finishedSize, int totalSize, int progressPercent) {
-        if (progressPercent - mProgress > 1) { // 降低状态栏进度刷新频率，性能问题
-            mProgress =  progressPercent;
+    public void onDownloadProgress(int finishedSize, int totalSize, int speed) {
+        int percent = finishedSize * 100 / totalSize;
+        if (percent - mProgress > 1) { // 降低状态栏进度刷新频率，性能问题
+            mProgress = percent;
             mNotification.contentView.setTextViewText(R.id.notify_state,
-                    mContext.getString(R.string.downloading_msg) + mProgress + "%");
-            mNotification.contentView.setProgressBar(R.id.notify_processbar, 100,
-                    (int) Math.round(progressPercent), false);
+                    mContext.getString(R.string.downloading_msg) + mProgress + "%, " + speed +"k/s");
+            mNotification.contentView.setProgressBar(R.id.notify_processbar, 100, percent, false);
             mNotificationManager.notify(mId, mNotification);
         }
     }
@@ -69,7 +69,7 @@ public class DownloadNotificationListener implements DownloadListener {
         mNotification.flags |= Notification.FLAG_AUTO_CANCEL;
         mNotification.defaults |= Notification.DEFAULT_SOUND;
         mNotification.defaults |= Notification.DEFAULT_LIGHTS;
-        
+
         Intent intent = new Intent(mContext, DownloadListActivity.class);
         intent.putExtra("isDownloaded", true);
 

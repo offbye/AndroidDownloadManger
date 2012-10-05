@@ -67,7 +67,7 @@ public class DownloadingAdapter extends ArrayAdapter<DownloadTask> {
         // ImageUtil.loadImage(holder.mIcon, task.getThumbnail());
 
         if (task.getPercent() > 0) {
-            holder.mProgressBar.setProgress((int)task.getPercent());
+            holder.mProgressBar.setProgress(task.getPercent());
         }
 
         switch (mTaskList.get(position).getDownloadState()) {

@@ -65,8 +65,8 @@ public class TestActivity extends Activity implements OnClickListener {
             }
 
             @Override
-            public void onDownloadProgress(int finishedSize, int totalSize, int progressPercent) {
-                Log.i(TAG, "已下载：" + progressPercent);
+            public void onDownloadProgress(int finishedSize, int totalSize, int speed) {
+                Log.i(TAG, "speed：" + speed);
             }
 
         };

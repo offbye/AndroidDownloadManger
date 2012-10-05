@@ -285,12 +285,12 @@ public class DownloadListActivity extends Activity implements OnClickListener {
 
         @Override
         public void onDownloadProgress(final int finishedSize, final int totalSize,
-                int progressPercent) {
+                int speed) {
             // Log.d(TAG, "download " + finishedSize);
             task.setDownloadState(DownloadState.DOWNLOADING);
             task.setFinishedSize(finishedSize);
             task.setTotalSize(totalSize);
-            task.setPercent(progressPercent);
+            task.setPercent(finishedSize*100/totalSize);
 
             DownloadListActivity.this.runOnUiThread(new Runnable() {
                 @Override

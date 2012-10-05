@@ -113,6 +113,8 @@ public class DownloadOperator extends AsyncTask<Void, Integer, Void> {
             //int size = totalSize / 200 > UPDATE_DB_PER_SIZE ? UPDATE_DB_PER_SIZE : totalSize / 200; //降低刷新频率，下载100k刷新一次页面
             byte[] buffer = new byte[BUFFER_SIZE];
             int length = -1;
+            long startTime = System.currentTimeMillis();
+            int speed = 0;
             while ((length = is.read(buffer)) != -1) {
                 // pause download
                 if (mPause) {
@@ -146,10 +148,12 @@ public class DownloadOperator extends AsyncTask<Void, Integer, Void> {
                 if (finishedSize - mDownloadTask.getFinishedSize() > UPDATE_DB_PER_SIZE) {
                     mDownloadTask.setFinishedSize(finishedSize);
                     mDlTaskMng.updateDownloadTask(mDownloadTask);
-                    publishProgress(finishedSize, totalSize);
+                    speed =  (int)(finishedSize/(int)(System.currentTimeMillis() + 1 - startTime));
+                    publishProgress(finishedSize, totalSize, speed);
                 } else if (totalSize - finishedSize < UPDATE_DB_PER_SIZE) {//如果剩余下载不足UPDATE_DB_PER_SIZE则继续发出通知
                     mDownloadTask.setFinishedSize(finishedSize);
-                    publishProgress(finishedSize, totalSize);
+                    speed =  (int)(finishedSize/(int)(System.currentTimeMillis() + 1 - startTime));
+                    publishProgress(finishedSize, totalSize, speed);
                 }
 
             }
@@ -204,9 +208,10 @@ public class DownloadOperator extends AsyncTask<Void, Integer, Void> {
 
         int finished = values[0];
         int total = values[1];
+        int speed = values[2];
 
         for (DownloadListener l : mDlTaskMng.getListeners(mDownloadTask)) {
-            l.onDownloadProgress(finished, total, Math.round(finished * 100 / total));
+            l.onDownloadProgress(finished, total, speed);
         }
     }
 
@@ -265,6 +270,11 @@ public class DownloadOperator extends AsyncTask<Void, Integer, Void> {
             mDownloadTask.setTotalSize(fileSize);
             conn.disconnect();
 
+            File downFilePath = new File(mDownloadTask.getFilePath());
+            if (!downFilePath.exists()) {
+                downFilePath.mkdirs();
+            }
+            
             File file = new File(mDownloadTask.getFilePath() + "/" + mDownloadTask.getFileName());
             if (!file.exists()) {
                 file.createNewFile();

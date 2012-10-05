@@ -40,7 +40,7 @@ public interface DownloadListener {
      * 
      * @param finishedSize 已完成的大小
      * @param totalSize 下载的总大小
-     * @param progressPercent 进度百分比
+     * @param speed download speed
      */
-    void onDownloadProgress(int finishedSize, int totalSize, int progressPercent);
+    void onDownloadProgress(int finishedSize, int totalSize, int speed);
 }
