@@ -1,14 +1,15 @@
 
 package com.zxt.download2;
 
+import android.content.Context;
+import android.os.Environment;
+import android.util.Log;
+import android.webkit.URLUtil;
+
 import java.io.File;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
-
-import android.content.Context;
-import android.util.Log;
-import android.webkit.URLUtil;
 
 /**
  * 下载任务管理类，单例模式<BR>
@@ -25,7 +26,7 @@ public class DownloadTaskManager {
     /**
      * 默认 文件保存路径/sdcard/download
      */
-    private static final String DEFAULT_FILE_PATH = "/sdcard/download";
+    private static final String DEFAULT_FILE_PATH = Environment.getExternalStorageDirectory().getPath() + "/download";
 
     /**
      * 单例本类实例
@@ -83,12 +84,12 @@ public class DownloadTaskManager {
 
         if (downloadTask.getFileName() == null || downloadTask.getFileName().trim().length() == 0) {
             Log.w(TAG, "file name is invalid. file name : " + downloadTask.getFileName());
-            return;
+            throw new IllegalArgumentException("file name is invalid");
         }
         
         if (null == downloadTask.getUrl() || !URLUtil.isHttpUrl(downloadTask.getUrl())) {
             Log.w(TAG, "invalid http url: " + downloadTask.getUrl());
-            return;
+            throw new IllegalArgumentException("invalid http url");
         }
 
         if (mDownloadMap.containsKey(downloadTask)) {
@@ -97,7 +98,7 @@ public class DownloadTaskManager {
         }
 
         if (null == mDownloadListenerMap.get(downloadTask)) {
-            HashSet<DownloadListener> set = new HashSet<DownloadListener>(3);
+            HashSet<DownloadListener> set = new HashSet<DownloadListener>(5);
             mDownloadListenerMap.put(downloadTask, set);
         }
 
@@ -192,6 +193,8 @@ public class DownloadTaskManager {
      */
     public void deleteDownloadTask(DownloadTask downloadTask) {
         mDownloadDBHelper.delete(downloadTask);
+        mDownloadMap.remove(downloadTask);
+        mDownloadListenerMap.remove(downloadTask);
     }
     
     /**
@@ -221,13 +224,15 @@ public class DownloadTaskManager {
         return mDownloadListenerMap.get(downloadTask);
     }
 
-    public boolean addListener(DownloadTask downloadTask, DownloadListener listener) {
+    public void addListener(DownloadTask downloadTask, DownloadListener listener) {
         if (null != mDownloadListenerMap.get(downloadTask)) {
             mDownloadListenerMap.get(downloadTask).add(listener);
             Log.d(TAG, downloadTask.getFileName() + " addListener ");
-            return true;
+        } else {
+            HashSet<DownloadListener> set = new HashSet<DownloadListener>(5);
+            mDownloadListenerMap.put(downloadTask, set);
+            mDownloadListenerMap.get(downloadTask).add(listener);
         }
-        return false;
     }
 
     public boolean deleteFile(String filePath) {

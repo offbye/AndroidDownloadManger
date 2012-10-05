@@ -70,7 +70,7 @@ public class DownloadOpenFile {
     // Android获取一个用于打开VIDEO文件的intent
     public static Intent getVideoFileIntent(String param) {
 
-        Intent intent = new Intent("android.intent.action.VIEW");
+        Intent intent = new Intent(Intent.ACTION_VIEW);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
 //        intent.putExtra("oneshot", 0);
 //        intent.putExtra("configchange", 0);

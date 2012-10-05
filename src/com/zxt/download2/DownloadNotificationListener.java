@@ -87,6 +87,7 @@ public class DownloadNotificationListener implements DownloadListener {
                 mContext.getString(R.string.download_failed));
         mNotification.contentView.setProgressBar(R.id.notify_processbar, 100, 0, true);
         mNotificationManager.notify(mId, mNotification);
+        mNotificationManager.cancel(mId);
     }
 
     public Notification initNotifiction(String title) {
