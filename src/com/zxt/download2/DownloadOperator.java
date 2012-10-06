@@ -132,14 +132,14 @@ public class DownloadOperator extends AsyncTask<Void, Integer, Void> {
                 }
 
                 // stop download, delete the download task
-                if (mStop) {
+                /* if (mStop) {
                     Log.i(TAG, "stop download, exit download loop and delete download task.");
                     for (DownloadListener l : mDlTaskMng.getListeners(mDownloadTask)) {
                         l.onDownloadStop();
                     }
                     //mDlTaskMng.deleteDownloadTask(mDownloadTask);
                     return null;
-                }
+                } */
 
                 finishedSize += length;
                 accessFile.write(buffer, 0, length);
