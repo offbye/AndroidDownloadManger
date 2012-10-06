@@ -2,9 +2,11 @@
 package com.zxt.download2;
 
 /**
- * 下载监听器 ,一个下载任务可以添加多个监听器
+ * Download listener, you add many listeners to a download task. And the
+ * listeners can be auto removed after download task finished or you delete the
+ * download task manually.
  * 
- * @author zxt
+ * @author offbye@gmail.com
  */
 public interface DownloadListener {
     /**

@@ -2,6 +2,8 @@
 package com.zxt.download2;
 
 import android.content.Context;
+import android.net.Uri;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -64,6 +66,9 @@ public class DownloadingAdapter extends ArrayAdapter<DownloadTask> {
         holder.mTitle.setText(task.getTitle());
         holder.mSize.setText(formatSize(task.getFinishedSize(), task.getTotalSize()));
 
+        if(!TextUtils.isEmpty(task.getThumbnail())){
+            holder.mThumbnail.setImageURI(Uri.parse(task.getThumbnail()));
+        }
         // ImageUtil.loadImage(holder.mIcon, task.getThumbnail());
 
         if (task.getPercent() > 0) {

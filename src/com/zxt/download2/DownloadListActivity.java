@@ -59,7 +59,7 @@ public class DownloadListActivity extends Activity implements OnClickListener {
 
         toggleView(getIntent().getBooleanExtra(DOWNLOADED, false));
 
-        mDownloadedlist = DownloadTaskManager.getInstance(mContext).getDownloadedTask();
+        mDownloadedlist = DownloadTaskManager.getInstance(mContext).getFinishedDownloadTask();
         mDownloadedAdapter = new DownloadingAdapter(DownloadListActivity.this, 0, mDownloadedlist);
 
         mDownloadedListView.setAdapter(mDownloadedAdapter);
@@ -101,7 +101,7 @@ public class DownloadListActivity extends Activity implements OnClickListener {
                                             DownloadTaskManager.getInstance(mContext)
                                                     .deleteDownloadTask(mDownloadedlist.get(arg2));
                                             DownloadTaskManager.getInstance(mContext)
-                                                    .deleteDownloadFile(mDownloadedlist.get(arg2));
+                                                    .deleteDownloadTaskFile(mDownloadedlist.get(arg2));
                                             mDownloadedlist.remove(arg2);
                                             mDownloadedAdapter.notifyDataSetChanged();
                                         }
@@ -180,7 +180,7 @@ public class DownloadListActivity extends Activity implements OnClickListener {
                                             DownloadTaskManager.getInstance(mContext)
                                                     .deleteDownloadTask(mDownloadinglist.get(arg2));
                                             DownloadTaskManager.getInstance(mContext)
-                                                    .deleteDownloadFile(mDownloadinglist.get(arg2));
+                                                    .deleteDownloadTaskFile(mDownloadinglist.get(arg2));
                                             mDownloadinglist.remove(arg2);
                                             mDownloadingAdapter.notifyDataSetChanged();
                                         }

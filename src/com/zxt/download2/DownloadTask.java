@@ -5,19 +5,19 @@ import android.text.TextUtils;
 import android.webkit.URLUtil;
 
 /**
- * 下载任务类
+ * DownloadTask class this class used to create a download task.
  * 
- * @author zxt
+ * @author offbye@gmail.com
  */
 public class DownloadTask {
 
     /**
-     * 下载地址
+     * download url
      */
     private String url;
 
     /**
-     * 文件名
+     * fileName
      */
     private String fileName;
 
@@ -42,30 +42,42 @@ public class DownloadTask {
     }
 
     /**
-     * 文件保存路径（默认路径为sdcard下download路径）
+     * Download file save path,default path is "/sdcard/download"
      */
     private String filePath;
 
     /**
-     * 文件已完成下载大小
+     * download finished Size
      */
     private int finishedSize;
 
     /**
-     * 文件总大小
+     * total Size
      */
     private int totalSize;
 
     /**
-     * 已完成百分比
+     * finished percent
      */
     private int percent;
 
+    private int speed;
+    
     /**
-     * 下载的状态
+     * download state
      */
     private volatile DownloadState downloadState;
 
+    /**
+     * DownloadTask constructor for create a new download task.
+     * 
+     * @param url must a http url.
+     * @param filePath if filePath is null, we will use the default download
+     *            path "/sdcard/download"
+     * @param fileName file name, must input
+     * @param title task title for display.Can be null
+     * @param thumbnail task thumbnail image,should be a uri string. Can be null
+     */
     public DownloadTask(String url, String filePath, String fileName, String title, String thumbnail) {
         if (!URLUtil.isHttpUrl(url)) {
             throw new IllegalArgumentException("invalid url,nust start with http://");
@@ -180,12 +192,20 @@ public class DownloadTask {
     }
 
     /**
-     * set percent
+     * set download percent
      * 
-     * @param dlPercent the dlPercent to set
+     * @param percent
      */
     public void setPercent(int percent) {
         this.percent = percent;
+    }
+    
+    public int getSpeed() {
+        return speed;
+    }
+
+    public void setSpeed(int speed) {
+        this.speed = speed;
     }
 
     /**

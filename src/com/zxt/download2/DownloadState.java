@@ -1,9 +1,10 @@
+
 package com.zxt.download2;
 
 /**
- * 下载状态 <BR>
+ * download state enum
  * 
- * @author zxt
+ * @author offbye@gmail.com
  */
 public enum DownloadState {
     /**
@@ -15,15 +16,17 @@ public enum DownloadState {
      * downloading
      */
     DOWNLOADING,
-    
+    /**
+     * download failed, the reason may be network error, file io error etc.
+     */
     FAILED,
     /**
-     * 下载完成
+     * download finished
      */
     FINISHED,
 
     /**
-     * 下载暂停状态
+     * download paused
      */
     PAUSE
 }

@@ -8,6 +8,14 @@ import android.content.Context;
 import android.content.Intent;
 import android.widget.RemoteViews;
 
+/**
+ * DownloadNotificationListener implements DownloadListener and finished the job
+ * of show download progress and messages in notification bar.You can use it
+ * show messages in notification bar, or you can write own DownloadListener.
+ * 
+ * @author offbye@gmail.com
+ */
+
 public class DownloadNotificationListener implements DownloadListener {
     private Context mContext;
 
@@ -33,6 +41,7 @@ public class DownloadNotificationListener implements DownloadListener {
                 mContext.getString(R.string.download_stopped));
 
         mNotificationManager.notify(mId, mNotification);
+        mNotificationManager.cancel(mId);
     }
 
     @Override
@@ -46,7 +55,8 @@ public class DownloadNotificationListener implements DownloadListener {
         if (percent - mProgress > 1) { // 降低状态栏进度刷新频率，性能问题
             mProgress = percent;
             mNotification.contentView.setTextViewText(R.id.notify_state,
-                    mContext.getString(R.string.downloading_msg) + mProgress + "%, " + speed +"k/s");
+                    mContext.getString(R.string.downloading_msg) + mProgress + "%, " + speed
+                            + "k/s");
             mNotification.contentView.setProgressBar(R.id.notify_processbar, 100, percent, false);
             mNotificationManager.notify(mId, mNotification);
         }

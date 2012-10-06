@@ -14,9 +14,9 @@ import java.net.MalformedURLException;
 import java.net.URL;
 
 /**
- * 下载操作类 <BR>
+ * Download worker
  * 
- * @author zxt
+ * @author offbye@gmail.com
  */
 public class DownloadOperator extends AsyncTask<Void, Integer, Void> {
 
@@ -89,6 +89,7 @@ public class DownloadOperator extends AsyncTask<Void, Integer, Void> {
         InputStream is = null;
         int finishedSize = 0;
         int totalSize = 0;
+        int startSize = 0;
         try {
             URL url = new URL(mDownloadTask.getUrl());
             conn = (HttpURLConnection) url.openConnection();
@@ -105,6 +106,7 @@ public class DownloadOperator extends AsyncTask<Void, Integer, Void> {
 
             finishedSize = mDownloadTask.getFinishedSize();
             totalSize = mDownloadTask.getTotalSize();
+            startSize = finishedSize;
 
             is = conn.getInputStream();
             Log.d(TAG, "downloadListeners size=" +  mDlTaskMng.getListeners(mDownloadTask).size());
@@ -121,23 +123,21 @@ public class DownloadOperator extends AsyncTask<Void, Integer, Void> {
                     Log.i(TAG, "pause download, exit download loop.");
                     mDownloadTask.setDownloadState(DownloadState.PAUSE);
                     mDownloadTask.setFinishedSize(finishedSize);
-                    mDlTaskMng.updateDownloadTask(mDownloadTask);
 
                     for (DownloadListener l : mDlTaskMng.getListeners(mDownloadTask)) {
                         l.onDownloadPause();
                     }
+                    mDlTaskMng.updateDownloadTask(mDownloadTask);
                     return null;
                 }
 
                 // stop download, delete the download task
                 if (mStop) {
                     Log.i(TAG, "stop download, exit download loop and delete download task.");
-                    mDlTaskMng.deleteDownloadTask(mDownloadTask);
-
                     for (DownloadListener l : mDlTaskMng.getListeners(mDownloadTask)) {
                         l.onDownloadStop();
                     }
-
+                    //mDlTaskMng.deleteDownloadTask(mDownloadTask);
                     return null;
                 }
 
@@ -148,11 +148,11 @@ public class DownloadOperator extends AsyncTask<Void, Integer, Void> {
                 if (finishedSize - mDownloadTask.getFinishedSize() > UPDATE_DB_PER_SIZE) {
                     mDownloadTask.setFinishedSize(finishedSize);
                     mDlTaskMng.updateDownloadTask(mDownloadTask);
-                    speed =  (int)(finishedSize/(int)(System.currentTimeMillis() + 1 - startTime));
+                    speed =  (int)((finishedSize - startSize)/(int)(System.currentTimeMillis() + 1 - startTime));
                     publishProgress(finishedSize, totalSize, speed);
                 } else if (totalSize - finishedSize < UPDATE_DB_PER_SIZE) {//如果剩余下载不足UPDATE_DB_PER_SIZE则继续发出通知
                     mDownloadTask.setFinishedSize(finishedSize);
-                    speed =  (int)(finishedSize/(int)(System.currentTimeMillis() + 1 - startTime));
+                    speed =  (int)((finishedSize - startSize)/(int)(System.currentTimeMillis() + 1 - startTime));
                     publishProgress(finishedSize, totalSize, speed);
                 }
 
@@ -161,21 +161,23 @@ public class DownloadOperator extends AsyncTask<Void, Integer, Void> {
             mDownloadTask.setDownloadState(DownloadState.FINISHED);
             mDownloadTask.setFinishedSize(finishedSize);
             Log.d(TAG, "finished " +  mDownloadTask);
+            mDlTaskMng.updateDownloadTask(mDownloadTask);
+
             for (DownloadListener l : mDlTaskMng.getListeners(mDownloadTask)) {
                 l.onDownloadFinish(mDownloadTask.getFilePath() + "/" + mDownloadTask.getFileName());
             }
-            mDlTaskMng.updateDownloadTask(mDownloadTask);
+            mDlTaskMng.getListeners(mDownloadTask).clear();
             mDlTaskMng.removeListener(mDownloadTask);
             
         } catch (Exception e) {
             Log.e(TAG, "download exception : " + e.getMessage());
             mDownloadTask.setDownloadState(DownloadState.FAILED);
             mDownloadTask.setFinishedSize(finishedSize);
-            mDlTaskMng.updateDownloadTask(mDownloadTask);
 
             for (DownloadListener l : mDlTaskMng.getListeners(mDownloadTask)) {
                 l.onDownloadFail();
             }
+            mDlTaskMng.updateDownloadTask(mDownloadTask);
 
         } finally {
             try {
@@ -227,6 +229,7 @@ public class DownloadOperator extends AsyncTask<Void, Integer, Void> {
     /**
      * 停止下载 <BR>
      */
+    @Deprecated
     void stopDownload() {
         Log.i(TAG, "stop download.");
         mStop = true;

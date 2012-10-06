@@ -12,15 +12,12 @@ import java.util.List;
 import java.util.concurrent.CopyOnWriteArraySet;
 
 /**
- * 下载任务管理类，单例模式<BR>
- * 提供添加、更新、查询、暂停、取消（停止）下载任务
+ * A single instance Download Manager, we use this class manage all download task.
  * 
- * @author zxt
+ * @author offbye@gmail.com
  */
 public class DownloadTaskManager {
-    /**
-     * debug tag.
-     */
+
     private static final String TAG = "DownloadTaskManager";
 
     /**
@@ -39,14 +36,14 @@ public class DownloadTaskManager {
     private DownloadDBHelper mDownloadDBHelper;
 
     /**
-     * 一个下载任务对应一个下载操作实例
+     * one download task own a download worker
      */
     private HashMap<DownloadTask, DownloadOperator> mDownloadMap;
 
     private HashMap<DownloadTask, CopyOnWriteArraySet<DownloadListener>> mDownloadListenerMap;
 
     /**
-     * 私有默认构造
+     * private constructor
      * 
      * @param context
      */
@@ -58,7 +55,7 @@ public class DownloadTaskManager {
     }
 
     /**
-     * 获取该类单例实例对象 <BR>
+     * Get a single instance of DownloadTaskManager
      * 
      * @param context Context
      * @return DownloadTaskManager instance
@@ -71,7 +68,7 @@ public class DownloadTaskManager {
     }
 
     /**
-     * 开始下载<BR>
+     * Start new download Task, if a same download Task already existed,it will exit and leave a "task existed" log. 
      * 
      * @param downloadTask DownloadTask
      */
@@ -116,20 +113,20 @@ public class DownloadTaskManager {
     }
 
     /**
-     * 暂停下载 <BR>
+     * Pause a downloading task
      * 
      * @param downloadTask DownloadTask
      */
     public void pauseDownload(DownloadTask downloadTask) {
         if (mDownloadMap.containsKey(downloadTask)) {
             mDownloadMap.get(downloadTask).pauseDownload();
-            mDownloadMap.remove(downloadTask);
+            //mDownloadMap.remove(downloadTask);
         }
 
     }
 
     /**
-     * 继续下载、续传<BR>
+     * Continue or restart a downloadTask.
      * 
      * @param downloadTask DownloadTask
      */
@@ -169,17 +166,18 @@ public class DownloadTaskManager {
     }
 
     /**
-     * 停止下载 <BR>
+     * Stop a task,this method  not used now。Please use pauseDownload instead.
      * 
      * @param downloadTask DownloadTask
      */
+    @Deprecated
     public void stopDownload(DownloadTask downloadTask) {
         mDownloadMap.get(downloadTask).stopDownload();
         mDownloadMap.remove(downloadTask);
     }
 
     /**
-     * 获取全部下载任务 <BR>
+     * get all Download task from database
      * 
      * @return DownloadTask list
      */
@@ -187,67 +185,91 @@ public class DownloadTaskManager {
         return mDownloadDBHelper.queryAll();
     }
 
+    /**
+     * get all Downloading task from database
+     * @return DownloadTask list
+     */
     public List<DownloadTask> getDownloadingTask() {
         return mDownloadDBHelper.queryUnDownloaded();
     }
 
-    public List<DownloadTask> getDownloadedTask() {
+    /**
+     * get all download finished task from database
+     * @return DownloadTask list
+     */
+    public List<DownloadTask> getFinishedDownloadTask() {
         return mDownloadDBHelper.queryDownloaded();
     }
 
     /**
-     * 存入一条下载任务<BR>
+     * insert a download task to database
      * 
      * @param downloadTask
      */
-    public void insertDownloadTask(DownloadTask downloadTask) {
+    void insertDownloadTask(DownloadTask downloadTask) {
         mDownloadDBHelper.insert(downloadTask);
     }
 
     /**
-     * 更新下载任务 <BR>
+     * update a download task to database
      * 
      * @param downloadTask
      */
-    public void updateDownloadTask(DownloadTask downloadTask) {
+    void updateDownloadTask(DownloadTask downloadTask) {
         mDownloadDBHelper.update(downloadTask);
     }
 
     /**
-     * 删除下载任务 <BR>
+     * delete a download task from download queue, remove it's listeners, and delete it from database.
      * 
      * @param downloadTask
      */
     public void deleteDownloadTask(DownloadTask downloadTask) {
-        mDownloadDBHelper.delete(downloadTask);
+        if(downloadTask.getDownloadState() != DownloadState.FINISHED){
+            for (DownloadListener l : getListeners(downloadTask)) {
+                l.onDownloadStop();
+            }
+            getListeners(downloadTask).clear();
+        }
         mDownloadMap.remove(downloadTask);
         mDownloadListenerMap.remove(downloadTask);
+        mDownloadDBHelper.delete(downloadTask);
     }
     
     /**
-     * 删除已下载文件 <BR>
+     * delete a download task's download file.
      * 
      * @param downloadTask
      */
-    public void deleteDownloadFile(DownloadTask downloadTask) {
+    public void deleteDownloadTaskFile(DownloadTask downloadTask) {
         deleteFile(downloadTask.getFilePath() + "/" + downloadTask.getFileName());
     }
 
     /**
-     * 查询指定url的下载任务 <BR>
+     * query a download task from database according url. 
      * 
      * @param url 下载url
      * @return DownloadTask
      */
-    public DownloadTask queryDownloadTask(String url) {
+    DownloadTask queryDownloadTask(String url) {
         return mDownloadDBHelper.query(url);
     }
 
+    /**
+     * query a download task is already running.
+     * @param downloadTask
+     * @return
+     */
     public boolean existRunningTask(DownloadTask downloadTask) {
         return mDownloadMap.containsKey(downloadTask);
     }
 
-    public CopyOnWriteArraySet<DownloadListener> getListeners(DownloadTask downloadTask) {
+    /**
+     * Get all Listeners of a download task 
+     * @param downloadTask
+     * @return
+     */
+    CopyOnWriteArraySet<DownloadListener> getListeners(DownloadTask downloadTask) {
         if(null != mDownloadListenerMap.get(downloadTask)){
             return mDownloadListenerMap.get(downloadTask);
         } else {
@@ -255,6 +277,14 @@ public class DownloadTaskManager {
         }
     }
 
+    /**
+     * Register a DownloadListener to a downloadTask.
+     * You can register many DownloadListener to a downloadTask in any time.
+     * Such as register a listener to update you own progress bar, do something after file download finished.
+     * 
+     * @param downloadTask
+     * @param listener
+     */
     public void registerListener(DownloadTask downloadTask, DownloadListener listener) {
         if (null != mDownloadListenerMap.get(downloadTask)) {
             mDownloadListenerMap.get(downloadTask).add(listener);
@@ -266,11 +296,20 @@ public class DownloadTaskManager {
         }
     }
     
+    /**
+     * Remove Listeners from  a downloadTask, you do not need manually call this method.
+     * @param downloadTask
+     */
     public void removeListener(DownloadTask downloadTask) {
         mDownloadListenerMap.remove(downloadTask);
     }
 
-    public boolean deleteFile(String filePath) {
+    /**
+     * delete a file 
+     * @param filePath
+     * @return
+     */
+    public static boolean deleteFile(String filePath) {
         File file = new File(filePath);
         if (file.exists()) {
             return file.delete();
