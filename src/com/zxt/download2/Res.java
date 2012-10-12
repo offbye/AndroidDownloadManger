@@ -7,7 +7,7 @@ import android.content.Context;
 import android.util.Log;
 
 public class Res {
-    private static final String TAG = Res.class.getName();
+    private static final String TAG = "Res";
 
     private static Res mRes;
 
@@ -27,8 +27,8 @@ public class Res {
 
     private static Class<?> array = null;
 
-    private Res(Context paramContext) {
-        this.mContext = paramContext;
+    private Res(Context context) {
+        this.mContext = context;
         try {
             drawable = Class.forName(this.mContext.getPackageName() + ".R$drawable");
         } catch (ClassNotFoundException ex) {
@@ -66,9 +66,9 @@ public class Res {
         }
     }
 
-    public static Res getInstance(Context paramContext) {
+    public synchronized static Res getInstance(Context context) {
         if (mRes == null)
-            mRes = new Res(paramContext);
+            mRes = new Res(context);
         return mRes;
     }
 

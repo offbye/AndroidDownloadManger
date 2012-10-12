@@ -48,15 +48,15 @@ public class DownloadingAdapter extends ArrayAdapter<DownloadTask> {
 
         final DownloadTask task = mTaskList.get(position);
         if (convertView == null) {
-            convertView = mLayoutInflater.inflate(R.layout.download_list_item, null);
+            convertView = mLayoutInflater.inflate(Res.getInstance(mContext).getLayout("download_list_item"), null);
             holder = new ViewHolder();
 
-            holder.mThumbnail = (ImageView) convertView.findViewById(R.id.thumbnail);
-            holder.mTitle = (TextView) convertView.findViewById(R.id.title);
-            holder.mSize = (TextView) convertView.findViewById(R.id.size);
-            holder.mStatusText = (TextView) convertView.findViewById(R.id.state);
-            holder.mStateImageView = (ImageView) convertView.findViewById(R.id.ic_state);
-            holder.mProgressBar = (ProgressBar) convertView.findViewById(R.id.progress);
+            holder.mThumbnail = (ImageView) convertView.findViewById(Res.getInstance(mContext).getId("thumbnail"));
+            holder.mTitle = (TextView) convertView.findViewById(Res.getInstance(mContext).getId("title"));
+            holder.mSize = (TextView) convertView.findViewById(Res.getInstance(mContext).getId("size"));
+            holder.mStatusText = (TextView) convertView.findViewById(Res.getInstance(mContext).getId("state"));
+            holder.mStateImageView = (ImageView) convertView.findViewById(Res.getInstance(mContext).getId("ic_state"));
+            holder.mProgressBar = (ProgressBar) convertView.findViewById(Res.getInstance(mContext).getId("progress"));
             holder.mProgressBar.setMax(100);
             convertView.setTag(holder);
         } else {
@@ -78,30 +78,30 @@ public class DownloadingAdapter extends ArrayAdapter<DownloadTask> {
         switch (mTaskList.get(position).getDownloadState()) {
 
             case PAUSE:
-                holder.mStatusText.setText(R.string.download_paused);
-                holder.mStateImageView.setImageResource(R.drawable.ic_download_ing);
+                holder.mStatusText.setText(Res.getInstance(mContext).getString("download_paused"));
+                holder.mStateImageView.setImageResource(Res.getInstance(mContext).getDrawable("ic_download_ing")); 
                 holder.mProgressBar.setIndeterminate(true);
                 break;
             case FAILED:
-                holder.mStatusText.setText(R.string.download_failed);
-                holder.mStateImageView.setImageResource(R.drawable.ic_download_retry);
+                holder.mStatusText.setText(Res.getInstance(mContext).getString("download_failed"));
+                holder.mStateImageView.setImageResource(Res.getInstance(mContext).getDrawable("ic_download_retry"));
                 holder.mProgressBar.setIndeterminate(true);
                 break;
             case DOWNLOADING:
-                holder.mStatusText.setText(R.string.download_downloading);
-                holder.mStateImageView.setImageResource(R.drawable.ic_download_pause);
+                holder.mStatusText.setText(Res.getInstance(mContext).getString("download_downloading"));
+                holder.mStateImageView.setImageResource(Res.getInstance(mContext).getDrawable("ic_download_pause"));
                 holder.mProgressBar.setIndeterminate(false);
                 break;
             case FINISHED:
                 holder.mProgressBar.setProgress(100);
                 holder.mProgressBar.setIndeterminate(false);
-                holder.mStatusText.setText(R.string.download_finished);
-                holder.mStateImageView.setImageResource(R.drawable.download_finished_do);
+                holder.mStatusText.setText(Res.getInstance(mContext).getString("download_finished"));
+                holder.mStateImageView.setImageResource(Res.getInstance(mContext).getDrawable("download_finished_do"));
                 break;
             case INITIALIZE:
                 holder.mProgressBar.setIndeterminate(false);
-                holder.mStatusText.setText(R.string.download_initial);
-                holder.mStateImageView.setImageResource(R.drawable.ic_download_ing);
+                holder.mStatusText.setText(Res.getInstance(mContext).getString("download_initial"));
+                holder.mStateImageView.setImageResource(Res.getInstance(mContext).getDrawable("ic_download_ing"));
                 break;
             default:
                 break;

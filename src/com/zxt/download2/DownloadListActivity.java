@@ -45,12 +45,12 @@ public class DownloadListActivity extends Activity  {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.download_list);
+        setContentView(Res.getInstance(mContext).getLayout("download_list"));
 
         mContext = this;
 
-        mDownloadingBtn = (Button) findViewById(R.id.buttonDownloading);
-        mDownloadedBtn = (Button) findViewById(R.id.buttonDownloaded);
+        mDownloadingBtn = (Button) findViewById(Res.getInstance(mContext).getId("buttonDownloading"));
+        mDownloadedBtn = (Button) findViewById(Res.getInstance(mContext).getId("buttonDownloaded"));
         mDownloadedBtn.setOnClickListener(new OnClickListener(){
 
             @Override
@@ -64,8 +64,8 @@ public class DownloadListActivity extends Activity  {
                 toggleView(false);
             }});
 
-        mDownloadingListView = (ListView) findViewById(R.id.downloadingListView);
-        mDownloadedListView = (ListView) findViewById(R.id.downloadedListView);
+        mDownloadingListView = (ListView) findViewById(Res.getInstance(mContext).getId("downloadingListView"));
+        mDownloadedListView = (ListView) findViewById(Res.getInstance(mContext).getId("downloadedListView"));
 
         toggleView(getIntent().getBooleanExtra(DOWNLOADED, false));
 
@@ -77,11 +77,7 @@ public class DownloadListActivity extends Activity  {
 
             @Override
             public void onItemClick(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
-
-                DownloadTask task = mDownloadinglist.get(arg2);
-
-                mContext.startActivity(DownloadOpenFile.openFile(task.getFilePath()
-                        + task.getFileName()));
+                onDownloadFinishedClick(mDownloadinglist.get(arg2));
             }
         });
         mDownloadedListView.setOnItemLongClickListener(new OnItemLongClickListener() {
@@ -92,13 +88,13 @@ public class DownloadListActivity extends Activity  {
                 new AlertDialog.Builder(mContext)
                         .setItems(
                                 new String[] {
-                                        mContext.getString(R.string.download_delete_task),
-                                        mContext.getString(R.string.download_delete_task_file)
+                                        mContext.getString(Res.getInstance(mContext).getString("download_delete_task")),
+                                        mContext.getString(Res.getInstance(mContext).getString("download_delete_task_file"))
                                 }, new DialogInterface.OnClickListener() {
                                     public void onClick(DialogInterface dialog, int which) {
                                         if (which == 0) {
                                             Toast.makeText(mContext,
-                                                    R.string.download_deleted_task_ok,
+                                                    Res.getInstance(mContext).getString("download_deleted_task_ok"),
                                                     Toast.LENGTH_LONG).show();
                                             DownloadTaskManager.getInstance(mContext)
                                                     .deleteDownloadTask(mDownloadedlist.get(arg2));
@@ -106,7 +102,7 @@ public class DownloadListActivity extends Activity  {
                                             mDownloadedAdapter.notifyDataSetChanged();
                                         } else if (which == 1) {
                                             Toast.makeText(mContext,
-                                                    R.string.download_deleted_task_file_ok,
+                                                    Res.getInstance(mContext).getString("download_deleted_task_file_ok"),
                                                     Toast.LENGTH_LONG).show();
                                             DownloadTaskManager.getInstance(mContext)
                                                     .deleteDownloadTask(mDownloadedlist.get(arg2));
@@ -150,8 +146,7 @@ public class DownloadListActivity extends Activity  {
 
                         break;
                     case FINISHED:
-                        mContext.startActivity(DownloadOpenFile.openFile(task.getFilePath()
-                                + task.getFileName()));
+                        onDownloadFinishedClick(task);
                         break;
                     case INITIALIZE:
 
@@ -171,13 +166,13 @@ public class DownloadListActivity extends Activity  {
                 new AlertDialog.Builder(mContext)
                         .setItems(
                                 new String[] {
-                                        mContext.getString(R.string.download_delete_task),
-                                        mContext.getString(R.string.download_delete_task_file)
+                                        mContext.getString(Res.getInstance(mContext).getString("download_delete_task")),
+                                        mContext.getString(Res.getInstance(mContext).getString("download_delete_task_file"))
                                 }, new DialogInterface.OnClickListener() {
                                     public void onClick(DialogInterface dialog, int which) {
                                         if (which == 0) {
                                             Toast.makeText(mContext,
-                                                    R.string.download_deleted_task_ok,
+                                                    Res.getInstance(mContext).getString("download_deleted_task_ok"),
                                                     Toast.LENGTH_LONG).show();
                                             DownloadTaskManager.getInstance(mContext)
                                                     .deleteDownloadTask(mDownloadinglist.get(arg2));
@@ -185,7 +180,7 @@ public class DownloadListActivity extends Activity  {
                                             mDownloadingAdapter.notifyDataSetChanged();
                                         } else if (which == 1) {
                                             Toast.makeText(mContext,
-                                                    R.string.download_deleted_task_file_ok,
+                                                    Res.getInstance(mContext).getString("download_deleted_task_file_ok"),
                                                     Toast.LENGTH_LONG).show();
                                             DownloadTaskManager.getInstance(mContext)
                                                     .deleteDownloadTask(mDownloadinglist.get(arg2));
@@ -212,13 +207,13 @@ public class DownloadListActivity extends Activity  {
 
     private void toggleView(boolean isShowDownloaded) {
         if (isShowDownloaded) {
-            mDownloadedBtn.setBackgroundResource(R.drawable.download_right_tab_selected);
-            mDownloadingBtn.setBackgroundResource(R.drawable.download_left_tab);
+            mDownloadedBtn.setBackgroundResource(Res.getInstance(mContext).getDrawable("download_right_tab_selected"));
+            mDownloadingBtn.setBackgroundResource(Res.getInstance(mContext).getDrawable("download_left_tab"));
             mDownloadedListView.setVisibility(View.VISIBLE);
             mDownloadingListView.setVisibility(View.GONE);
         } else {
-            mDownloadedBtn.setBackgroundResource(R.drawable.download_right_tab);
-            mDownloadingBtn.setBackgroundResource(R.drawable.download_left_tab_selected);
+            mDownloadedBtn.setBackgroundResource(Res.getInstance(mContext).getDrawable("download_right_tab"));
+            mDownloadingBtn.setBackgroundResource(Res.getInstance(mContext).getDrawable("download_left_tab_selected"));
             mDownloadedListView.setVisibility(View.GONE);
             mDownloadingListView.setVisibility(View.VISIBLE);
         }
@@ -321,5 +316,14 @@ public class DownloadListActivity extends Activity  {
         toggleView(intent.getBooleanExtra(DOWNLOADED, false));
 
         super.onNewIntent(intent);
+    }
+
+    /**
+     * You can overwrite this method to implement what you want do after download task item is clicked.
+     * @param task
+     */
+    public void onDownloadFinishedClick(DownloadTask task) {
+        mContext.startActivity(DownloadOpenFile.openFile(task.getFilePath()
+                + task.getFileName()));
     }
 }
