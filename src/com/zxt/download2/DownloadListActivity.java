@@ -73,11 +73,11 @@ public class DownloadListActivity extends Activity  {
         mDownloadedAdapter = new DownloadingAdapter(DownloadListActivity.this, 0, mDownloadedlist);
 
         mDownloadedListView.setAdapter(mDownloadedAdapter);
-        mDownloadingListView.setOnItemClickListener(new OnItemClickListener() {
+        mDownloadedListView.setOnItemClickListener(new OnItemClickListener() {
 
             @Override
             public void onItemClick(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
-                onDownloadFinishedClick(mDownloadinglist.get(arg2));
+                onDownloadFinishedClick(mDownloadedlist.get(arg2));
             }
         });
         mDownloadedListView.setOnItemLongClickListener(new OnItemLongClickListener() {

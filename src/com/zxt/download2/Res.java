@@ -17,7 +17,7 @@ public class Res {
 
     private static Class<?> drawable = null;
 
-    private static Class<?> Layout = null;
+    private static Class<?> layout = null;
 
     private static Class<?> anim = null;
 
@@ -30,12 +30,13 @@ public class Res {
     private Res(Context context) {
         this.mContext = context;
         try {
+            Log.d(TAG, this.mContext.getPackageName() + ".R$drawable");
             drawable = Class.forName(this.mContext.getPackageName() + ".R$drawable");
         } catch (ClassNotFoundException ex) {
             Log.d(TAG, ex.getMessage());
         }
         try {
-            Layout = Class.forName(this.mContext.getPackageName() + ".R$layout");
+            layout = Class.forName(this.mContext.getPackageName() + ".R$layout");
         } catch (ClassNotFoundException e) {
             Log.d(TAG, e.getMessage());
         }
@@ -85,7 +86,7 @@ public class Res {
     }
 
     public int getLayout(String paramString) {
-        return getR(Layout, paramString);
+        return getR(layout, paramString);
     }
 
     public int getStyle(String paramString) {

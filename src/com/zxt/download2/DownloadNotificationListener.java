@@ -17,6 +17,8 @@ import android.widget.RemoteViews;
  */
 
 public class DownloadNotificationListener implements DownloadListener {
+    private static final String ACTION_DOWNLOAD = "com.zxt.download2";
+
     private Context mContext;
 
     private Notification mNotification;
@@ -80,7 +82,7 @@ public class DownloadNotificationListener implements DownloadListener {
         mNotification.defaults |= Notification.DEFAULT_SOUND;
         mNotification.defaults |= Notification.DEFAULT_LIGHTS;
 
-        Intent intent = new Intent(mContext, DownloadListActivity.class);
+        Intent intent = new Intent(ACTION_DOWNLOAD);
         intent.putExtra("isDownloaded", true);
 
         mNotification.contentIntent = PendingIntent.getActivity(mContext, 0, intent,
@@ -112,8 +114,7 @@ public class DownloadNotificationListener implements DownloadListener {
 
         notification.contentView.setTextViewText(Res.getInstance(mContext).getId("notify_text"), title);
 
-        notification.contentIntent = PendingIntent.getActivity(mContext, 0, new Intent(mContext,
-                DownloadListActivity.class), PendingIntent.FLAG_UPDATE_CURRENT);
+        notification.contentIntent = PendingIntent.getActivity(mContext, 0, new Intent(ACTION_DOWNLOAD), PendingIntent.FLAG_UPDATE_CURRENT);
         return notification;
 
     }
