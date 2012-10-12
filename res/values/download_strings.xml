@@ -26,5 +26,5 @@
     <string name="download_delete_task_file">删除任务和已下载文件</string>
     <string name="download_deleted_task_ok">已删除下载任务</string>
     <string name="download_deleted_task_file_ok">已删除下载任务和已下载文件</string>
-
+    <string name="download_file">已下载文件%1$s</string>
 </resources>

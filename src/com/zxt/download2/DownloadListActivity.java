@@ -1,6 +1,8 @@
 
 package com.zxt.download2;
 
+import java.util.List;
+
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
@@ -17,9 +19,7 @@ import android.widget.Button;
 import android.widget.ListView;
 import android.widget.Toast;
 
-import java.util.List;
-
-public class DownloadListActivity extends Activity implements OnClickListener {
+public class DownloadListActivity extends Activity  {
     public static final String DOWNLOADED = "isDownloaded";
 
     private static final String TAG = "DownloadListActivity";
@@ -51,8 +51,18 @@ public class DownloadListActivity extends Activity implements OnClickListener {
 
         mDownloadingBtn = (Button) findViewById(R.id.buttonDownloading);
         mDownloadedBtn = (Button) findViewById(R.id.buttonDownloaded);
-        mDownloadedBtn.setOnClickListener(this);
-        mDownloadingBtn.setOnClickListener(this);
+        mDownloadedBtn.setOnClickListener(new OnClickListener(){
+
+            @Override
+            public void onClick(View v) {
+                toggleView(true);
+            }});
+        mDownloadingBtn.setOnClickListener(new OnClickListener(){
+
+            @Override
+            public void onClick(View v) {
+                toggleView(false);
+            }});
 
         mDownloadingListView = (ListView) findViewById(R.id.downloadingListView);
         mDownloadedListView = (ListView) findViewById(R.id.downloadedListView);
@@ -291,6 +301,7 @@ public class DownloadListActivity extends Activity implements OnClickListener {
             task.setFinishedSize(finishedSize);
             task.setTotalSize(totalSize);
             task.setPercent(finishedSize*100/totalSize);
+            task.setSpeed(speed);
 
             DownloadListActivity.this.runOnUiThread(new Runnable() {
                 @Override
@@ -311,20 +322,4 @@ public class DownloadListActivity extends Activity implements OnClickListener {
 
         super.onNewIntent(intent);
     }
-
-    @Override
-    public void onClick(View v) {
-        switch (v.getId()) {
-            case R.id.buttonDownloaded:
-                toggleView(true);
-                break;
-            case R.id.buttonDownloading:
-                toggleView(false);
-                break;
-            default:
-                break;
-        }
-
-    }
-
 }

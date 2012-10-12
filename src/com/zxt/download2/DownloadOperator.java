@@ -20,7 +20,7 @@ import java.net.URL;
  */
 public class DownloadOperator extends AsyncTask<Void, Integer, Void> {
 
-    private static final int BUFFER_SIZE = 8192;
+    private static final int BUFFER_SIZE = 4096;
 
     private static final int UPDATE_DB_PER_SIZE = 102400;
 
@@ -94,11 +94,12 @@ public class DownloadOperator extends AsyncTask<Void, Integer, Void> {
             URL url = new URL(mDownloadTask.getUrl());
             conn = (HttpURLConnection) url.openConnection();
             conn.setConnectTimeout(5000);
+            conn.setRequestProperty("Accept-Encoding", "musixmatch");
             conn.setRequestMethod("GET");
             conn.setRequestProperty("Range", "bytes=" + mDownloadTask.getFinishedSize() + "-"
                     + mDownloadTask.getTotalSize());
-            //conn.setRequestProperty("User-Agent", "Mozilla/4.0 (compatible; MSIE 8.0; Windows NT 5.2; Trident/4.0; .NET CLR 1.1.4322; .NET CLR 2.0.50727; .NET CLR 3.0.04506.30; .NET CLR 3.0.4506.2152; .NET CLR 3.5.30729)");
-            conn.setRequestProperty("Connection", "Keep-Alive");
+            conn.setRequestProperty("User-Agent", "Mozilla/4.0 (compatible; MSIE 8.0; Windows NT 5.2; Trident/4.0; .NET CLR 1.1.4322; .NET CLR 2.0.50727; .NET CLR 3.0.04506.30; .NET CLR 3.0.4506.2152; .NET CLR 3.5.30729)");
+//            conn.setRequestProperty("Connection", "Keep-Alive");
 
             accessFile = new RandomAccessFile(mDownloadTask.getFilePath() + "/"
                     + mDownloadTask.getFileName(), "rwd");
@@ -142,6 +143,7 @@ public class DownloadOperator extends AsyncTask<Void, Integer, Void> {
                 } */
 
                 finishedSize += length;
+                Log.d(TAG, "length=" +length);
                 accessFile.write(buffer, 0, length);
 
                 // update database per 100K.
@@ -157,6 +159,7 @@ public class DownloadOperator extends AsyncTask<Void, Integer, Void> {
                 }
 
             }
+            conn.disconnect();
 
             mDownloadTask.setDownloadState(DownloadState.FINISHED);
             mDownloadTask.setFinishedSize(finishedSize);
@@ -171,6 +174,7 @@ public class DownloadOperator extends AsyncTask<Void, Integer, Void> {
             
         } catch (Exception e) {
             Log.e(TAG, "download exception : " + e.getMessage());
+            e.printStackTrace();
             mDownloadTask.setDownloadState(DownloadState.FAILED);
             mDownloadTask.setFinishedSize(finishedSize);
 
@@ -266,10 +270,14 @@ public class DownloadOperator extends AsyncTask<Void, Integer, Void> {
             URL url = new URL(mDownloadTask.getUrl());
             conn = (HttpURLConnection) url.openConnection();
             conn.setConnectTimeout(5000);
-            conn.setRequestMethod("GET");
+            conn.setRequestProperty("Accept-Encoding","musixmatch");
+//            conn.setRequestProperty("Accept-Encoding", "identity");
+            conn.setRequestMethod("HEAD");
+
+//            conn.setRequestMethod("GET");
 
             int fileSize = conn.getContentLength();
-            Log.d(TAG, "total size[" + fileSize + "]");
+            Log.i(TAG, "total size[" + fileSize + "]");
             mDownloadTask.setTotalSize(fileSize);
             conn.disconnect();
 
