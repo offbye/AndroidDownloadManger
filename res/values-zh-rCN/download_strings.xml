@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- download_manager -->
+    <string name="download_manager">下载管理</string>
+    <string name="download_install">安装</string>
+    <string name="download_downloading">正在下载</string>
+    <string name="download_finishing">已下载%1$s%</string>
+    <string name="download_downloaded">已下载</string>
+    <string name="download_initial">准备下载</string>
+    <string name="download_stopped">下载停止</string>
+    <string name="download_paused">下载暂停</string>
+    <string name="download_failed">下载失败</string>
+    <string name="download_finished">下载完成</string>
+    <string name="download_installed">已安裝</string>
+    <string name="download_cancel">取消下载</string>
+    <string name="download_continue">继续下载</string>
+    <string name="download_notification">一个下载任务已完成</string>
+    <string name="download_click_notify">点击查看下载列表</string>
+    <string name="downloading_msg">正在下载…</string>
+    <string name="download_task_added">一个下载任务已经加入下载队列</string>
+    <string name="download_invalid_url">无效的下载地址</string>
+    <string name="downloaded_installed">已安装</string>
+    <string name="download_delete_task">删除下载任务</string>
+    <string name="download_delete_task_file">删除任务和已下载文件</string>
+    <string name="download_deleted_task_ok">已删除下载任务</string>
+    <string name="download_deleted_task_file_ok">已删除下载任务和已下载文件</string>
+    <string name="download_file">已下载文件%1$s</string>
+    <string name="download_speed">已下载%1$s &#3725;,速度%2$s KB/S</string>
+    <string name="download_file_not_exist">文件不存在</string>
+    <!-- Strongly suggest change this action string -->
+    <string name="download_list_action">com.zxt.download2.action</string>
+</resources>

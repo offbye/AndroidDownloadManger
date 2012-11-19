@@ -5,59 +5,87 @@
     android:orientation="vertical" >
 
     <Button
-        android:id="@+id/download_add"
-        android:layout_width="wrap_content"
+        android:id="@+id/download_add1"
+        android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_centerVertical="true"
         android:layout_marginLeft="4dip"
         android:gravity="center"
-        android:text="add download"
+        android:text="@string/download_task1"
         android:textSize="18sp" >
     </Button>
 
     <Button
         android:id="@+id/download_add2"
-        android:layout_width="wrap_content"
+        android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_centerVertical="true"
         android:layout_marginLeft="4dip"
         android:gravity="center"
-        android:text="add download2"
+        android:text="@string/download_task2"
         android:textSize="18sp" >
     </Button>
 
     <Button
         android:id="@+id/download_add3"
-        android:layout_width="wrap_content"
+        android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_centerVertical="true"
         android:layout_marginLeft="4dip"
         android:gravity="center"
-        android:text="add download3"
+        android:text="@string/download_task3"
         android:textSize="18sp" >
     </Button>
 
     <Button
         android:id="@+id/download_add4"
-        android:layout_width="wrap_content"
+        android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_centerVertical="true"
         android:layout_marginLeft="4dip"
         android:gravity="center"
-        android:text="add download4"
+        android:text="@string/download_task4"
         android:textSize="18sp" >
     </Button>
 
     <Button
         android:id="@+id/download_add5"
-        android:layout_width="wrap_content"
+        android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_centerVertical="true"
         android:layout_marginLeft="4dip"
         android:gravity="center"
-        android:text="add download5"
+        android:text="@string/download_task5"
         android:textSize="18sp" >
     </Button>
+
+    <Button
+        android:id="@+id/download_list"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:layout_marginRight="4dip"
+        android:gravity="center"
+        android:text="@string/go_to_downloading_list"
+        android:textSize="18sp" >
+    </Button>
+
+    <Button
+        android:id="@+id/downloaded_list"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:layout_marginRight="4dip"
+        android:gravity="center"
+        android:text="@string/go_to_downloaded_list"
+        android:textSize="18sp" >
+    </Button>
+
+    <EditText
+        android:id="@+id/download_url_text"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content" 
+        android:hint="@string/hint_url_download"/>
 
     <Button
         android:id="@+id/download_add6"
@@ -66,29 +94,7 @@
         android:layout_centerVertical="true"
         android:layout_marginLeft="4dip"
         android:gravity="center"
-        android:text="add download6"
-        android:textSize="18sp" >
-    </Button>
-
-    <Button
-        android:id="@+id/download_list"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerVertical="true"
-        android:layout_marginRight="4dip"
-        android:gravity="center"
-        android:text="download list"
-        android:textSize="18sp" >
-    </Button>
-    
-     <Button
-        android:id="@+id/downloaded_list"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerVertical="true"
-        android:layout_marginRight="4dip"
-        android:gravity="center"
-        android:text="downloaded list"
+        android:text="download"
         android:textSize="18sp" >
     </Button>
 

@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="download_task1">Add download task without status bar notification</string>
+    <string name="download_task2">Add download task with status bar notification</string>
+    <string name="download_task3">Add download  task apk with install after downloaded</string>
+    <string name="download_task4">Add download  task  video with sdcard image </string>
+    <string name="download_task5">Add download  task  video with online image</string>
+    <string name="go_to_downloaded_list">Go to downloading list</string>
+    <string name="go_to_downloading_list">Go to downloading list</string>
+    <string name="hint_url_download">Please input a http download url</string>
+    
+</resources>

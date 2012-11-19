@@ -14,10 +14,23 @@
 -keep public class com.zxt.download2.DownloadTaskManager
 -keep public class com.zxt.download2.DownloadTask
 -keep public class com.zxt.download2.DownloadState
--keep public class com.zxt.download2.DownloadListener
+-keep public interface  com.zxt.download2.DownloadListener
+-keep public class * implements com.zxt.download2.DownloadListener
 -keep public class com.zxt.download2.DownloadNotificationListener
 
+-keep public class * {
+    public  *;
+}
 
+-keepclassmembernames class * {
+    java.lang.Class class$(java.lang.String);
+    java.lang.Class class$(java.lang.String, boolean);
+}
+
+-keepclassmembers enum * {
+    public static **[] values();
+    public static ** valueOf(java.lang.String);
+}
 
 # If your project uses WebView with JS, uncomment the following
 # and specify the fully qualified class name to the JavaScript interface

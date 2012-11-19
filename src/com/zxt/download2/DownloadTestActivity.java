@@ -1,16 +1,22 @@
 
 package com.zxt.download2;
 
+import java.io.File;
+
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.webkit.URLUtil;
+import android.widget.EditText;
 import android.widget.Toast;
 
 public class DownloadTestActivity extends Activity implements OnClickListener {
@@ -21,6 +27,8 @@ public class DownloadTestActivity extends Activity implements OnClickListener {
 
     private Context mContext;
 
+    private EditText mUrlTV;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
@@ -28,12 +36,15 @@ public class DownloadTestActivity extends Activity implements OnClickListener {
 
         mContext = this;
         setContentView(R.layout.download_test);
-        findViewById(R.id.download_add).setOnClickListener(this);
+
+        mUrlTV = (EditText) findViewById(R.id.download_url_text);
+        findViewById(R.id.download_add1).setOnClickListener(this);
         findViewById(R.id.download_add2).setOnClickListener(this);
         findViewById(R.id.download_add3).setOnClickListener(this);
         findViewById(R.id.download_add4).setOnClickListener(this);
         findViewById(R.id.download_add5).setOnClickListener(this);
         findViewById(R.id.download_add6).setOnClickListener(this);
+
         findViewById(R.id.download_list).setOnClickListener(this);
         findViewById(R.id.downloaded_list).setOnClickListener(this);
         Res.getInstance(mContext);
@@ -42,104 +53,112 @@ public class DownloadTestActivity extends Activity implements OnClickListener {
     @Override
     public void onClick(View v) {
         int id = v.getId();
-        if (id == R.id.download_add) {
-            Toast.makeText(mContext, Res.getInstance(mContext).getString("download_deleted_task_ok"), 1).show();
+        if (id == R.id.download_add1) {
+            Toast.makeText(mContext,
+                    Res.getInstance(mContext).getString("download_deleted_task_ok"), 1).show();
             DownloadTask downloadTask = new DownloadTask(
                     "http://apache.etoak.com/ant/ivy/2.3.0-rc1/apache-ivy-2.3.0-rc1-src.zip",
-                    SDCARD, "apache-ivy.zip", "apache-ivy.zip", null);
+                    null, "apache-ivy.zip", "apache-ivy.zip", null);
             DownloadTaskManager.getInstance(this).startDownload(downloadTask);
-            Toast.makeText(this, "add task 1", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, R.string.download_task1, Toast.LENGTH_SHORT).show();
         } else if (id == R.id.download_add2) {
             DownloadTask downloadTask2 = new DownloadTask(
-                    "http://mirror.bjtu.edu.cn/apache/axis/axis2/java/core/1.6.2/axis2-eclipse-service-plugin-1.6.2.zip",
-                    SDCARD, "axis2.zip", "axis2.zip", null);
+                    "http://www.us.apache.org/dist/axis/axis2/java/core/1.6.2/axis2-eclipse-service-plugin-1.6.2.zip",
+                    null, "axis2-eclipse-service-plugin-1.6.2.zip", "axis2  zip", null);
+            DownloadTaskManager.getInstance(this).registerListener(downloadTask2,
+                    new DownloadNotificationListener(mContext, downloadTask2));
             DownloadTaskManager.getInstance(this).startDownload(downloadTask2);
-        } else if (id == R.id.download_add3) {
+            Toast.makeText(this, R.string.download_task2, Toast.LENGTH_SHORT).show();
+
+        } else if (id == R.id.download_add3) { // apk
             DownloadTask downloadTask3 = new DownloadTask(
-                    "http://flv1.vodfile.m1905.com/movie/1209/120904A8CD8E096BBD237F.flv",
-                    null, "就是闹着玩的.flv", "就是闹着玩的.flv", null);
-            DownloadTaskManager.getInstance(this).startDownload(downloadTask3);
+                    "http://d2.eoemarket.com/upload/2012/0220/apps/5631/apks/157006/3edc770c-5d19-d052-bce4-b5d073894030.apk",
+                    null, "tvguide.apk","China TVGuide",  null);
             DownloadTaskManager.getInstance(this).registerListener(downloadTask3,
                     new DownloadNotificationListener(mContext, downloadTask3));
+            DownloadTaskManager.getInstance(this).registerListener(downloadTask3,
+                    new DownloadListener() {
+
+                        @Override
+                        public void onDownloadFinish(String filepath) {
+                            // install apk
+                            Intent intent = new Intent();
+                            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                            intent.setAction(android.content.Intent.ACTION_VIEW);
+                            Uri uri = Uri.fromFile(new File(filepath));
+                            intent.setDataAndType(uri, "application/vnd.android.package-archive");
+                            startActivity(intent);
+                        }
+
+                        @Override
+                        public void onDownloadStart() {
+                            // TODO Auto-generated method stub
+
+                        }
+
+                        @Override
+                        public void onDownloadPause() {
+                            // TODO Auto-generated method stub
+
+                        }
+
+                        @Override
+                        public void onDownloadStop() {
+                            // TODO Auto-generated method stub
+
+                        }
+
+                        @Override
+                        public void onDownloadFail() {
+                            // TODO Auto-generated method stub
+
+                        }
+
+                        @Override
+                        public void onDownloadProgress(int finishedSize, int totalSize, int speed) {
+                            // TODO Auto-generated method stub
+
+                        }
+                    });
+            DownloadTaskManager.getInstance(this).startDownload(downloadTask3);
+
         } else if (id == R.id.download_add4) {
             DownloadTask downloadTask4 = new DownloadTask(
-                    "http://mmsvideopublic1.m1905.com/1209/12090396423D16DAA769B0.flv", SDCARD,
-                    "6DAA769B0.flv", "伊能静谈及新片欲“投诉”", null);
+                    "http://vf1.mtime.cn/Video/2012/11/17/flv/121117084047608344.flv", SDCARD,
+                    "Hobbit.flv", "The Hobbit: An Unexpected Journey", null);
+            downloadTask4.setThumbnail("file://sdcard/hobbit.jpg");
             DownloadTaskManager.getInstance(this).registerListener(downloadTask4,
                     new DownloadNotificationListener(mContext, downloadTask4));
             DownloadTaskManager.getInstance(this).startDownload(downloadTask4);
         } else if (id == R.id.download_add5) {
             DownloadTask downloadTask5 = new DownloadTask(
-                    "http://mmsvideopublic1.m1905.com/1209/120927A964F8A819E2B963.flv", SDCARD,
-                    "9E2B963.flv", "《白鹿原》艰难登顶 整体萎靡国庆发力", null);
-            DownloadTaskManager.getInstance(this).startDownload(downloadTask5);
+                    "http://vf1.mtime.cn/Video/2012/11/17/flv/121117084112530978.flv", SDCARD,
+                   "JackReacher.flv", "Jack Reacher ",  null);
+            downloadTask5.setThumbnail("http://img31.mtime.cn/mt/2012/10/17/103856.98537644_75X100.jpg");
             DownloadTaskManager.getInstance(this).registerListener(downloadTask5,
                     new DownloadNotificationListener(mContext, downloadTask5));
-            DownloadTaskManager.getInstance(this).registerListener(downloadTask5,
-                    new DownloadListener() {
-                        @Override
-                        public void onDownloadFinish(final String filepath) {
-                            Log.i(TAG, "filepath:" + filepath);
-                            DownloadTestActivity.this.runOnUiThread(new Runnable() {
-
-                                @Override
-                                public void run() {
-                                    Toast.makeText(
-                                            mContext,
-                                            String.format(
-                                                    mContext.getString(R.string.download_file),
-                                                    filepath), Toast.LENGTH_LONG).show();
-                                }
-                            });
-
-                        }
-
-                        @Override
-                        public void onDownloadStart() {
-                            Log.i(TAG, "----开始下载");
-                        }
-
-                        @Override
-                        public void onDownloadPause() {
-                            Log.i(TAG, "----暂停下载");
-                        }
-
-                        @Override
-                        public void onDownloadStop() {
-                            Log.i(TAG, "----停止下载");
-                        }
-
-                        @Override
-                        public void onDownloadFail() {
-                            Log.i(TAG, "----下载失败");
-                        }
-
-                        @Override
-                        public void onDownloadProgress(int finishedSize, int totalSize,
-                                int speed) {
-                            Log.i(TAG, "speed：" + speed);
-
-                        }
-
-                    });
+            DownloadTaskManager.getInstance(this).startDownload(downloadTask5);
         } else if (id == R.id.download_add6) {
-            DownloadTask downloadTask6 = new DownloadTask(
-                    "http://mirror.bit.edu.cn/apache/empire-db/2.3.0/apache-empire-db-2.3.0-dist.zip",
-                    SDCARD, "axis6.zip", "axis6.zip", null);
+            String url = mUrlTV.getText().toString().trim();
+            if (!URLUtil.isHttpUrl(url)) {
+                Toast.makeText(mContext, "not valid http url", Toast.LENGTH_SHORT).show();
+                return;
+            }
+            DownloadTask downloadTask6 = new DownloadTask(url, SDCARD, url.substring(url
+                    .lastIndexOf("/")), url.substring(url.lastIndexOf("/")), null);
             DownloadTaskManager.getInstance(this).registerListener(downloadTask6,
                     new DownloadNotificationListener(mContext, downloadTask6));
             DownloadTaskManager.getInstance(this).startDownload(downloadTask6);
         } else if (id == R.id.download_list) {
-            Toast.makeText(this, "list", 1).show();
+            Toast.makeText(this, R.string.go_to_downloading_list, 1).show();
             Intent i = new Intent(this, DownloadListActivity.class);
             i.putExtra(DownloadListActivity.DOWNLOADED, false);
             startActivity(i);
         } else if (id == R.id.downloaded_list) {
-            Toast.makeText(this, "list", 1).show();
+            Toast.makeText(this, R.string.go_to_downloaded_list, 1).show();
             Intent i2 = new Intent(this, DownloadListActivity.class);
             i2.putExtra(DownloadListActivity.DOWNLOADED, true);
             startActivity(i2);
-        } else {
         }
 
     }

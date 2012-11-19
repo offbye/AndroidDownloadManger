@@ -72,8 +72,12 @@ public class Res {
     }
 
     public synchronized static Res getInstance(Context context) {
-        if (mRes == null) {
-            mRes = new Res(context);
+        while (true) {
+            if (mRes == null) {
+                mRes = new Res(context);
+            } else {
+                break;
+            }
         }
         return mRes;
     }

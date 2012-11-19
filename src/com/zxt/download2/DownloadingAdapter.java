@@ -1,18 +1,26 @@
 
 package com.zxt.download2;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.List;
+
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.webkit.URLUtil;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-
-import java.util.List;
 
 public class DownloadingAdapter extends ArrayAdapter<DownloadTask> {
 
@@ -66,8 +74,10 @@ public class DownloadingAdapter extends ArrayAdapter<DownloadTask> {
         holder.mTitle.setText(task.getTitle());
         holder.mSize.setText(formatSize(task.getFinishedSize(), task.getTotalSize()));
 
-        if(!TextUtils.isEmpty(task.getThumbnail())){
-            holder.mThumbnail.setImageURI(Uri.parse(task.getThumbnail()));
+        if(URLUtil.isHttpUrl(task.getThumbnail())){
+            holder.mThumbnail.setImageBitmap(returnBitMap(task.getThumbnail()));
+        } else if (URLUtil.isFileUrl(task.getThumbnail())){
+            holder.mThumbnail.setImageBitmap(BitmapFactory.decodeFile(task.getThumbnail()));
         }
         // ImageUtil.loadImage(holder.mIcon, task.getThumbnail());
 
@@ -151,5 +161,27 @@ public class DownloadingAdapter extends ArrayAdapter<DownloadTask> {
         public ImageView mStateImageView;
 
     }
+    
+    public static Bitmap returnBitMap(String url) {
+        URL myFileUrl = null;
+        Bitmap bitmap = null;
+        try {
+            myFileUrl = new URL(url);
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+        }
+        try {
+            HttpURLConnection conn = (HttpURLConnection) myFileUrl.openConnection();
+            conn.setDoInput(true);
+            conn.connect();
+            InputStream is = conn.getInputStream();
+            bitmap = BitmapFactory.decodeStream(is);
+            is.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return bitmap;
+    }
+
 
 }
