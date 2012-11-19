@@ -15,9 +15,8 @@
 -keep public class com.zxt.download2.DownloadTask
 -keep public class com.zxt.download2.DownloadState
 -keep public class com.zxt.download2.DownloadListener
---keep class * implements com.zxt.download2.DownloadListener {
-   public *;
-}
+-keep public class com.zxt.download2.DownloadNotificationListener
+
 
 
 # If your project uses WebView with JS, uncomment the following

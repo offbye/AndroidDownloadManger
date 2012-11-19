@@ -18,10 +18,10 @@
 
     <application
         android:icon="@drawable/ic_launcher"
-        android:label="@string/app_name" >
+        android:label="@string/download_manager" >
         <activity
             android:name=".DownloadTestActivity"
-            android:label="@string/app_name" >
+            android:label="@string/download_manager" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -31,9 +31,18 @@
         <activity
             android:name=".DownloadListActivity"
             android:configChanges="orientation|keyboardHidden|locale"
-            android:label="@string/app_name"
+            android:label="@string/download_manager"
             android:launchMode="singleTop" >
+            <intent-filter>
+                <action android:name="@string/download_list_action"/>
+
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
         </activity>
+        <meta-data
+            android:name="DOWNLOAD_KEY"
+            android:value="d5d21b158b9925bcc51c6c7b1e6d4459" >
+        </meta-data>
     </application>
 
 </manifest>

@@ -1,15 +1,19 @@
 
 package com.zxt.download2;
 
+import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Field;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 
 import android.content.Context;
 import android.util.Log;
+import android.widget.Toast;
 
 public class Res {
     private static final String TAG = "Res";
 
-    private static Res mRes;
+    private  volatile static Res mRes;
 
     private Context mContext;
 
@@ -68,10 +72,27 @@ public class Res {
     }
 
     public synchronized static Res getInstance(Context context) {
-        if (mRes == null)
+        if (mRes == null) {
             mRes = new Res(context);
+        }
         return mRes;
     }
+
+//    public static Res getInstance(Context context) {
+//        if (mRes == null) {
+//            synchronized (Res.class) {
+//                while(true){
+//                    if (mRes == null) {
+//                        mRes = new Res(context);
+//                    } else {
+//                        break;
+//                    }
+//                }
+//               
+//            }
+//        }
+//        return mRes;
+//    }
 
     public int getAnim(String paramString) {
         return getR(anim, paramString);
@@ -118,4 +139,5 @@ public class Res {
         }
         return -1;
     }
+    
 }

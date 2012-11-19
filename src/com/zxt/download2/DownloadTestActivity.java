@@ -36,7 +36,7 @@ public class DownloadTestActivity extends Activity implements OnClickListener {
         findViewById(R.id.download_add6).setOnClickListener(this);
         findViewById(R.id.download_list).setOnClickListener(this);
         findViewById(R.id.downloaded_list).setOnClickListener(this);
-
+        Res.getInstance(mContext);
     }
 
     @Override

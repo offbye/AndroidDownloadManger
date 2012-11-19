@@ -47,7 +47,7 @@ public class DownloadingAdapter extends ArrayAdapter<DownloadTask> {
         ViewHolder holder = null;
 
         final DownloadTask task = mTaskList.get(position);
-        if (convertView == null) {
+        //if (convertView == null) {
             convertView = mLayoutInflater.inflate(Res.getInstance(mContext).getLayout("download_list_item"), null);
             holder = new ViewHolder();
 
@@ -58,10 +58,10 @@ public class DownloadingAdapter extends ArrayAdapter<DownloadTask> {
             holder.mStateImageView = (ImageView) convertView.findViewById(Res.getInstance(mContext).getId("ic_state"));
             holder.mProgressBar = (ProgressBar) convertView.findViewById(Res.getInstance(mContext).getId("progress"));
             holder.mProgressBar.setMax(100);
-            convertView.setTag(holder);
-        } else {
-            holder = (ViewHolder) convertView.getTag();
-        }
+        // convertView.setTag(holder);
+        // } else {
+        // holder = (ViewHolder) convertView.getTag();
+        // }
 
         holder.mTitle.setText(task.getTitle());
         holder.mSize.setText(formatSize(task.getFinishedSize(), task.getTotalSize()));
@@ -105,6 +105,14 @@ public class DownloadingAdapter extends ArrayAdapter<DownloadTask> {
                 break;
             default:
                 break;
+        }
+
+        if (position % 2 == 0) {
+            convertView.setBackgroundColor(mContext.getResources().getColor(
+                    R.color.listview_even_bg));
+        } else {
+            convertView.setBackgroundColor(mContext.getResources()
+                    .getColor(R.color.listview_odd_bg));
         }
 
         return convertView;

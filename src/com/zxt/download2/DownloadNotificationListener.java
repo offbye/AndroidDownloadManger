@@ -17,7 +17,6 @@ import android.widget.RemoteViews;
  */
 
 public class DownloadNotificationListener implements DownloadListener {
-    private static final String ACTION_DOWNLOAD = "com.zxt.download2";
 
     private Context mContext;
 
@@ -57,8 +56,8 @@ public class DownloadNotificationListener implements DownloadListener {
         if (percent - mProgress > 1) { // 降低状态栏进度刷新频率，性能问题
             mProgress = percent;
             mNotification.contentView.setTextViewText(Res.getInstance(mContext).getId("notify_state"),
-                    mContext.getString(Res.getInstance(mContext).getString("downloading_msg")) + mProgress + "%, " + speed
-                            + "k/s");
+                    String.format(mContext.getString(Res.getInstance(mContext).getString(
+                            "download_speed")), mProgress, speed));
             mNotification.contentView.setProgressBar(Res.getInstance(mContext).getId("notify_processbar"), 100, percent, false);
             mNotificationManager.notify(mId, mNotification);
         }
@@ -82,7 +81,7 @@ public class DownloadNotificationListener implements DownloadListener {
         mNotification.defaults |= Notification.DEFAULT_SOUND;
         mNotification.defaults |= Notification.DEFAULT_LIGHTS;
 
-        Intent intent = new Intent(ACTION_DOWNLOAD);
+        Intent intent = new Intent( mContext.getString(Res.getInstance(mContext).getString("download_list_action")));
         intent.putExtra("isDownloaded", true);
 
         mNotification.contentIntent = PendingIntent.getActivity(mContext, 0, intent,
@@ -114,7 +113,7 @@ public class DownloadNotificationListener implements DownloadListener {
 
         notification.contentView.setTextViewText(Res.getInstance(mContext).getId("notify_text"), title);
 
-        notification.contentIntent = PendingIntent.getActivity(mContext, 0, new Intent(ACTION_DOWNLOAD), PendingIntent.FLAG_UPDATE_CURRENT);
+        notification.contentIntent = PendingIntent.getActivity(mContext, 0, new Intent( mContext.getString(Res.getInstance(mContext).getString("download_list_action"))), PendingIntent.FLAG_UPDATE_CURRENT);
         return notification;
 
     }

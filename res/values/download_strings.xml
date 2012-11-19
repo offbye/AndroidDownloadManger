@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="app_name">Download Manager</string>
-    <!-- 下载模块 -->
+    <!-- download_manager -->
     <string name="download_manager">下载管理</string>
     <string name="download_install">安装</string>
     <string name="download_downloading">正在下载</string>
@@ -27,4 +26,8 @@
     <string name="download_deleted_task_ok">已删除下载任务</string>
     <string name="download_deleted_task_file_ok">已删除下载任务和已下载文件</string>
     <string name="download_file">已下载文件%1$s</string>
+    <string name="download_speed">已下载%1$s &#3725;,速度%2$s KB/S</string>
+    <string name="download_file_not_exist">文件不存在</string>
+    <!-- Strongly suggest change this action string -->
+    <string name="download_list_action">com.zxt.download2.action</string>
 </resources>

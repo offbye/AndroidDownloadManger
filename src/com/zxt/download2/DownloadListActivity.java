@@ -77,6 +77,7 @@ public class DownloadListActivity extends Activity  {
 
             @Override
             public void onItemClick(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
+                Log.d(TAG, "arg2" + arg2 + " mDownloadedlist" + mDownloadedlist.size());
                 onDownloadFinishedClick(mDownloadedlist.get(arg2));
             }
         });
@@ -202,7 +203,8 @@ public class DownloadListActivity extends Activity  {
                 addListener(task);
             }
         }
-
+        
+        DownloadOperator.check(mContext);
     }
 
     private void toggleView(boolean isShowDownloaded) {
@@ -235,10 +237,10 @@ public class DownloadListActivity extends Activity  {
             DownloadListActivity.this.runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    mDownloadingAdapter.remove(task);
-                    mDownloadedAdapter.add(task);
                     mDownloadingAdapter.notifyDataSetChanged();
-                    toggleView(true);
+                    mDownloadedAdapter.add(task);
+                    mDownloadingAdapter.remove(task);
+                    // toggleView(true);
                 }
             });
 
@@ -326,7 +328,17 @@ public class DownloadListActivity extends Activity  {
      * @param task
      */
     public void onDownloadFinishedClick(DownloadTask task) {
-        mContext.startActivity(DownloadOpenFile.openFile(task.getFilePath()
-                + task.getFileName()));
+        Log.d(TAG, task.getFilePath() + "/"+ task.getFileName());
+        Intent intent = DownloadOpenFile.openFile(task.getFilePath()
+                + "/"+ task.getFileName());
+        if (null == intent) {
+            Toast.makeText(mContext, R.string.download_file_not_exist, Toast.LENGTH_LONG).show();
+        } else {
+            mContext.startActivity(intent);
+        }
     }
+    
+
+    
+    
 }

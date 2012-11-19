@@ -23,12 +23,14 @@ public class DownloadTaskManager {
     /**
      * 默认 文件保存路径/sdcard/download
      */
-    private static final String DEFAULT_FILE_PATH = Environment.getExternalStorageDirectory().getPath() + "/download";
+    private static final String DEFAULT_FILE_PATH = Environment.getExternalStorageDirectory().getPath() + "/download/";
 
     /**
      * 单例本类实例
      */
     private static DownloadTaskManager sMe;
+
+    private static int mMaxTask = 0;
 
     /**
      * 下载任务数据库操作对象
@@ -63,6 +65,9 @@ public class DownloadTaskManager {
     public static synchronized DownloadTaskManager getInstance(Context context) {
         if (sMe == null) {
             sMe = new DownloadTaskManager(context);
+            if (DownloadOperator.check(context)< 2){
+                mMaxTask  = 5;
+            }
         }
         return sMe;
     }
@@ -91,6 +96,11 @@ public class DownloadTaskManager {
 
         if (mDownloadMap.containsKey(downloadTask)) {
             Log.w(TAG, "task existed");
+            return;
+        }
+        
+        if( mMaxTask > 0 && mDownloadMap.size() > mMaxTask) {
+            Log.w(TAG, "trial version can only add " + mMaxTask + " download task, please buy  a lincense");
             return;
         }
 

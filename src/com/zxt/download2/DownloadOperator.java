@@ -1,17 +1,22 @@
 
 package com.zxt.download2;
 
+import android.content.Context;
 import android.os.AsyncTask;
 import android.util.Log;
+import android.widget.Toast;
 
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.RandomAccessFile;
+import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 
 /**
  * Download worker
@@ -129,6 +134,7 @@ public class DownloadOperator extends AsyncTask<Void, Integer, Void> {
                         l.onDownloadPause();
                     }
                     mDlTaskMng.updateDownloadTask(mDownloadTask);
+                    
                     return null;
                 }
 
@@ -315,4 +321,41 @@ public class DownloadOperator extends AsyncTask<Void, Integer, Void> {
         } 
     }
 
+    
+    protected static String md5(String string) {
+        byte[] hash;
+        try {
+            hash = MessageDigest.getInstance("MD5").digest(string.getBytes("UTF-8"));
+        } catch (NoSuchAlgorithmException e) {
+            throw new RuntimeException("Huh, MD5 should be supported?", e);
+        } catch (UnsupportedEncodingException e) {
+            throw new RuntimeException("Huh, UTF-8 should be supported?", e);
+        }
+
+        StringBuilder hex = new StringBuilder(hash.length * 2);
+        for (byte b : hash) {
+            if ((b & 0xFF) < 0x10) hex.append("0");
+            hex.append(Integer.toHexString(b & 0xFF));
+        }
+        return hex.toString();
+    }
+    
+    protected static int check(Context context) {
+        String key = ManifestMetaData.getString(context, "DOWNLOAD_KEY");
+        String pack = context.getPackageName();
+        StringBuilder sb = new StringBuilder();
+        sb.append(pack);
+        sb.reverse();
+        sb.append(pack);
+        if(key.equals(md5(sb.toString()))){
+            return 2;
+        } else if (key.equals("testkey")){
+            Toast.makeText(context, "The download manger you use is a trial version,please buy a license", Toast.LENGTH_LONG).show();
+            return 1;
+        } else {
+            Toast.makeText(context, "The download manger key you use is invalid,please buy a license", Toast.LENGTH_LONG).show();
+            return -1;
+        }
+    }
+   
 }
