@@ -9,10 +9,9 @@ import java.net.URL;
 import java.util.List;
 
 import android.content.Context;
+import android.content.res.AssetManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.net.Uri;
-import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -75,9 +74,11 @@ public class DownloadingAdapter extends ArrayAdapter<DownloadTask> {
         holder.mSize.setText(formatSize(task.getFinishedSize(), task.getTotalSize()));
 
         if(URLUtil.isHttpUrl(task.getThumbnail())){
-            holder.mThumbnail.setImageBitmap(returnBitMap(task.getThumbnail()));
+            holder.mThumbnail.setImageBitmap(getBitMapFromUrl(task.getThumbnail()));
         } else if (URLUtil.isFileUrl(task.getThumbnail())){
             holder.mThumbnail.setImageBitmap(BitmapFactory.decodeFile(task.getThumbnail()));
+        } else if (!task.getThumbnail().contains("/")){
+            holder.mThumbnail.setImageBitmap(getBitmapFromAsset(task.getThumbnail()));
         }
         // ImageUtil.loadImage(holder.mIcon, task.getThumbnail());
 
@@ -162,7 +163,7 @@ public class DownloadingAdapter extends ArrayAdapter<DownloadTask> {
 
     }
     
-    public static Bitmap returnBitMap(String url) {
+    public static Bitmap getBitMapFromUrl(String url) {
         URL myFileUrl = null;
         Bitmap bitmap = null;
         try {
@@ -183,5 +184,16 @@ public class DownloadingAdapter extends ArrayAdapter<DownloadTask> {
         return bitmap;
     }
 
+    private Bitmap getBitmapFromAsset(String fileName) {
+        Bitmap image = null;
+        try {
+            AssetManager am = mContext.getAssets();
+            InputStream is = am.open(fileName);
+            image = BitmapFactory.decodeStream(is);
+            is.close();
+        } catch (Exception e) {
 
+        }
+        return image;
+    }
 }
