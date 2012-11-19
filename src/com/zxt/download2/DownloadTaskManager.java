@@ -1,15 +1,15 @@
 
 package com.zxt.download2;
 
-import android.content.Context;
-import android.os.Environment;
-import android.util.Log;
-import android.webkit.URLUtil;
-
 import java.io.File;
 import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArraySet;
+
+import android.content.Context;
+import android.os.Environment;
+import android.util.Log;
+import android.webkit.URLUtil;
 
 /**
  * A single instance Download Manager, we use this class manage all download task.
@@ -315,5 +315,25 @@ public class DownloadTaskManager {
             return file.delete();
         }
         return false;
+    }
+
+    /**
+     * If url exist in database and the download state is  FINISHED, and the file existed, return true.
+     * @param url
+     * @return
+     */
+    public boolean isUrlDownloaded(String url) {
+        boolean re = false;
+
+        DownloadTask task = mDownloadDBHelper.query(url);
+        if (null != task) {
+            if (task.getDownloadState() == DownloadState.FINISHED) {
+                File file = new File(task.getFilePath() + "/" + task.getFileName());
+                if (file.exists()) {
+                    re = true;
+                }
+            }
+        }
+        return re;
     }
 }

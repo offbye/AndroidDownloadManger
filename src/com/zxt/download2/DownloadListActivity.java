@@ -235,7 +235,10 @@ public class DownloadListActivity extends Activity  {
             DownloadListActivity.this.runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
+                    mDownloadingAdapter.remove(task);
+                    mDownloadedAdapter.add(task);
                     mDownloadingAdapter.notifyDataSetChanged();
+                    toggleView(true);
                 }
             });
 

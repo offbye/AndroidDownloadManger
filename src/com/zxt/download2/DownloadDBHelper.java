@@ -198,7 +198,7 @@ public class DownloadDBHelper extends SQLiteOpenHelper {
         Cursor cursor = db.query(TABLE_NAME, new String[] {
                 FIELD_URL, FIELD_DOWNLOAD_STATE, FIELD_FILEPATH, FIELD_FILENAME, FIELD_TITLE,
                 FIELD_THUMBNAIL, FIELD_FINISHED_SIZE, FIELD_TOTAL_SIZE
-        }, FIELD_DOWNLOAD_STATE + "='FINISHED'", null, null, null, null);
+        }, FIELD_DOWNLOAD_STATE + "='FINISHED'", null, null, null, "_id desc");
         if (cursor != null) {
             while (cursor.moveToNext()) {
                 DownloadTask dlTask = new DownloadTask(cursor.getString(0), cursor.getString(2),
@@ -222,7 +222,7 @@ public class DownloadDBHelper extends SQLiteOpenHelper {
         Cursor cursor = db.query(TABLE_NAME, new String[] {
                 FIELD_URL, FIELD_DOWNLOAD_STATE, FIELD_FILEPATH, FIELD_FILENAME, FIELD_TITLE,
                 FIELD_THUMBNAIL, FIELD_FINISHED_SIZE, FIELD_TOTAL_SIZE
-        }, FIELD_DOWNLOAD_STATE + "<> 'FINISHED'", null, null, null, null);
+        }, FIELD_DOWNLOAD_STATE + "<> 'FINISHED'", null, null, null, "_id desc");
         if (cursor != null) {
             while (cursor.moveToNext()) {
                 DownloadTask dlTask = new DownloadTask(cursor.getString(0), cursor.getString(2),

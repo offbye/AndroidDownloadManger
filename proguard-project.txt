@@ -11,6 +11,14 @@
 #   http://developer.android.com/guide/developing/tools/proguard.html
 
 # Add any project specific keep options here:
+-keep public class com.zxt.download2.DownloadTaskManager
+-keep public class com.zxt.download2.DownloadTask
+-keep public class com.zxt.download2.DownloadState
+-keep public class com.zxt.download2.DownloadListener
+--keep class * implements com.zxt.download2.DownloadListener {
+   public *;
+}
+
 
 # If your project uses WebView with JS, uncomment the following
 # and specify the fully qualified class name to the JavaScript interface
