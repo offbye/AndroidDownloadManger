@@ -10,6 +10,18 @@
 # For more details, see
 #   http://developer.android.com/guide/developing/tools/proguard.html
 
+-injars libs\your_library.jar
+-outjars libs\your_library_out.jar
+
+-libraryjars 'D:\android-sdk\platforms\android-9\android.jar'
+
+-optimizationpasses 5
+-dontusemixedcaseclassnames
+-ignorewarning
+-dontskipnonpubliclibraryclasses
+-dontoptimize
+-verbose
+
 # Add any project specific keep options here:
 -keep public class com.zxt.download2.DownloadTaskManager
 -keep public class com.zxt.download2.DownloadTask

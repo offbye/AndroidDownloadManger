@@ -34,23 +34,21 @@ public class DownloadOperator extends AsyncTask<Void, Integer, Void> {
      */
     private static final String TAG = "DownloadOperator";
 
-    /**
-     * 下载任务
-     */
+
     private DownloadTask mDownloadTask;
 
     /**
-     * 下载任务管理类
+     * DownloadTaskManager
      */
     private DownloadTaskManager mDlTaskMng;
 
     /**
-     * 如果暂停，停止下载，数据库更新
+     * pause flag
      */
     private volatile boolean mPause = false;
 
     /**
-     * 如果停止，停止下载，删除已下载部分及数据库相关记录
+     * stop flag, not used now.
      */
     private volatile boolean mStop = false;
 
@@ -58,8 +56,8 @@ public class DownloadOperator extends AsyncTask<Void, Integer, Void> {
     /**
      * Constructor
      * 
-     * @param dlTaskMng 下载任务管理类
-     * @param downloadTask 下载任务
+     * @param dlTaskMng
+     * @param downloadTask
      */
     DownloadOperator(DownloadTaskManager dlTaskMng, DownloadTask downloadTask) {
         mDownloadTask = downloadTask;
@@ -118,7 +116,7 @@ public class DownloadOperator extends AsyncTask<Void, Integer, Void> {
             Log.d(TAG, "downloadListeners size=" +  mDlTaskMng.getListeners(mDownloadTask).size());
 
             Log.i(TAG, "start writing data to file.");
-            //int size = totalSize / 200 > UPDATE_DB_PER_SIZE ? UPDATE_DB_PER_SIZE : totalSize / 200; //降低刷新频率，下载100k刷新一次页面
+            //int size = totalSize / 200 > UPDATE_DB_PER_SIZE ? UPDATE_DB_PER_SIZE : totalSize / 200; //decrease refresh frequency
             byte[] buffer = new byte[BUFFER_SIZE];
             int length = -1;
             long startTime = System.currentTimeMillis();
@@ -158,7 +156,7 @@ public class DownloadOperator extends AsyncTask<Void, Integer, Void> {
                     mDlTaskMng.updateDownloadTask(mDownloadTask);
                     speed =  (int)((finishedSize - startSize)/(int)(System.currentTimeMillis() + 1 - startTime));
                     publishProgress(finishedSize, totalSize, speed);
-                } else if (totalSize - finishedSize < UPDATE_DB_PER_SIZE) {//如果剩余下载不足UPDATE_DB_PER_SIZE则继续发出通知
+                } else if (totalSize - finishedSize < UPDATE_DB_PER_SIZE) {//send message in this case
                     mDownloadTask.setFinishedSize(finishedSize);
                     speed =  (int)((finishedSize - startSize)/(int)(System.currentTimeMillis() + 1 - startTime));
                     publishProgress(finishedSize, totalSize, speed);
@@ -211,7 +209,7 @@ public class DownloadOperator extends AsyncTask<Void, Integer, Void> {
     /**
      * <BR>
      * 
-     * @param values int型数组，0表示已完成大小，1表示总大小
+     * @param values int array
      * @see android.os.AsyncTask#onProgressUpdate(Progress[])
      */
     @Override
@@ -228,7 +226,7 @@ public class DownloadOperator extends AsyncTask<Void, Integer, Void> {
     }
 
     /**
-     * 暂停下载 <BR>
+     * pauseDownload
      */
     void pauseDownload() {
         Log.i(TAG, "pause download.");
@@ -237,7 +235,7 @@ public class DownloadOperator extends AsyncTask<Void, Integer, Void> {
     }
 
     /**
-     * 停止下载 <BR>
+     * stopDownload
      */
     @Deprecated
     void stopDownload() {
@@ -247,7 +245,7 @@ public class DownloadOperator extends AsyncTask<Void, Integer, Void> {
     }
 
     /**
-     * 续传<BR>
+     * continueDownload
      */
     void continueDownload() {
         Log.i(TAG, "continue download.");
@@ -257,7 +255,7 @@ public class DownloadOperator extends AsyncTask<Void, Integer, Void> {
     }
 
     /**
-     * 开始下载 <BR>
+     * startDownload
      */
     void startDownload() {
         Log.i(TAG, "start download.");
@@ -267,7 +265,7 @@ public class DownloadOperator extends AsyncTask<Void, Integer, Void> {
     }
 
     /**
-     * 创建文件 <BR>
+     * createFile
      */
     private void createFile() {
         HttpURLConnection conn = null;

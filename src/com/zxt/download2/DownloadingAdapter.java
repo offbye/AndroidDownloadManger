@@ -76,9 +76,9 @@ public class DownloadingAdapter extends ArrayAdapter<DownloadTask> {
         if(URLUtil.isHttpUrl(task.getThumbnail())){
             holder.mThumbnail.setImageBitmap(getBitMapFromUrl(task.getThumbnail()));
         } else if (URLUtil.isFileUrl(task.getThumbnail())){
-            holder.mThumbnail.setImageBitmap(BitmapFactory.decodeFile(task.getThumbnail()));
-        } else if (!task.getThumbnail().contains("/")){
-            holder.mThumbnail.setImageBitmap(getBitmapFromAsset(task.getThumbnail()));
+            holder.mThumbnail.setImageBitmap(BitmapFactory.decodeFile(task.getThumbnail().substring(8)));
+        } else if (URLUtil.isAssetUrl(task.getThumbnail())){
+            holder.mThumbnail.setImageBitmap(getBitmapFromAsset(task.getThumbnail().substring(22)));
         }
         // ImageUtil.loadImage(holder.mIcon, task.getThumbnail());
 

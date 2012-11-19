@@ -21,19 +21,19 @@ public class DownloadTaskManager {
     private static final String TAG = "DownloadTaskManager";
 
     /**
-     * 默认 文件保存路径/sdcard/download
+     * default  save path: /sdcard/download
      */
     private static final String DEFAULT_FILE_PATH = Environment.getExternalStorageDirectory().getPath() + "/download/";
 
     /**
-     * 单例本类实例
+     * single instance
      */
     private static DownloadTaskManager sMe;
 
     private static int mMaxTask = 0;
 
     /**
-     * 下载任务数据库操作对象
+     * Download Database Helper
      */
     private DownloadDBHelper mDownloadDBHelper;
 

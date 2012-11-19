@@ -10,35 +10,35 @@ package com.zxt.download2;
  */
 public interface DownloadListener {
     /**
-     * 下载完成 <BR>
+     * Download Finish
      * 
-     * @param filepath 文件路径
+     * @param filepath
      */
     void onDownloadFinish(String filepath);
 
     /**
-     * 下载开始 <BR>
+     * Download Start
      */
     void onDownloadStart();
 
     /**
-     * 下载已暂停 <BR>
+     * Download Pause
      */
     void onDownloadPause();
 
     /**
-     * 下载已停止 <BR>
+     * Download Stop
      */
     void onDownloadStop();
 
     /**
-     * 下载失败 <BR>
+     * Download Fail
      */
     void onDownloadFail();
 
     /**
-     * 更新进度实现方法<BR>
-     * 此方法可以用于显示具体的进度百分比
+     * Download Progress update
+     * can be used to display speed and percent.
      * 
      * @param finishedSize 已完成的大小
      * @param totalSize 下载的总大小

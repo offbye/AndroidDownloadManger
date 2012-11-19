@@ -74,20 +74,27 @@ public class DownloadTestActivity extends Activity implements OnClickListener {
             DownloadTask downloadTask3 = new DownloadTask(
                     "http://d2.eoemarket.com/upload/2012/0220/apps/5631/apks/157006/3edc770c-5d19-d052-bce4-b5d073894030.apk",
                     null, "tvguide.apk","China TVGuide",  null);
+            downloadTask3.setThumbnail("file:///android_asset/download.png");//use asset image
             DownloadTaskManager.getInstance(this).registerListener(downloadTask3,
                     new DownloadNotificationListener(mContext, downloadTask3));
             DownloadTaskManager.getInstance(this).registerListener(downloadTask3,
                     new DownloadListener() {
 
                         @Override
-                        public void onDownloadFinish(String filepath) {
+                        public void onDownloadFinish(final String filepath) {
                             // install apk
-                            Intent intent = new Intent();
-                            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                            intent.setAction(android.content.Intent.ACTION_VIEW);
-                            Uri uri = Uri.fromFile(new File(filepath));
-                            intent.setDataAndType(uri, "application/vnd.android.package-archive");
-                            startActivity(intent);
+                        	DownloadTestActivity.this.runOnUiThread(new Runnable(){
+
+								@Override
+								public void run() {
+									Intent intent = new Intent();
+			                        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+			                        intent.setAction(android.content.Intent.ACTION_VIEW);
+			                        Uri uri = Uri.fromFile(new File(filepath));
+			                        intent.setDataAndType(uri, "application/vnd.android.package-archive");
+			                        startActivity(intent);									
+								}});
+   
                         }
 
                         @Override
@@ -126,7 +133,7 @@ public class DownloadTestActivity extends Activity implements OnClickListener {
             DownloadTask downloadTask4 = new DownloadTask(
                     "http://vf1.mtime.cn/Video/2012/11/17/flv/121117084047608344.flv", SDCARD,
                     "Hobbit.flv", "The Hobbit: An Unexpected Journey", null);
-            downloadTask4.setThumbnail("file://sdcard/hobbit.jpg");
+            downloadTask4.setThumbnail("file:///sdcard/hobbit.jpg"); //use image file uri
             DownloadTaskManager.getInstance(this).registerListener(downloadTask4,
                     new DownloadNotificationListener(mContext, downloadTask4));
             DownloadTaskManager.getInstance(this).startDownload(downloadTask4);
@@ -134,7 +141,7 @@ public class DownloadTestActivity extends Activity implements OnClickListener {
             DownloadTask downloadTask5 = new DownloadTask(
                     "http://vf1.mtime.cn/Video/2012/11/17/flv/121117084112530978.flv", SDCARD,
                    "JackReacher.flv", "Jack Reacher ",  null);
-            downloadTask5.setThumbnail("http://img31.mtime.cn/mt/2012/10/17/103856.98537644_75X100.jpg");
+            downloadTask5.setThumbnail("http://img31.mtime.cn/mt/2012/10/17/103856.98537644_75X100.jpg"); //use url image
             DownloadTaskManager.getInstance(this).registerListener(downloadTask5,
                     new DownloadNotificationListener(mContext, downloadTask5));
             DownloadTaskManager.getInstance(this).startDownload(downloadTask5);
