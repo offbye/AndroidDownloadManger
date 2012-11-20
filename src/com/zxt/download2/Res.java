@@ -72,9 +72,11 @@ public class Res {
     }
 
     public synchronized static Res getInstance(Context context) {
-        while (true) {
+    	int i = 0;
+        while (i < 3) {
             if (mRes == null) {
                 mRes = new Res(context);
+                i++;
             } else {
                 break;
             }

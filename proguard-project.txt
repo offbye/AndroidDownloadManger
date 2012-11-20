@@ -10,10 +10,10 @@
 # For more details, see
 #   http://developer.android.com/guide/developing/tools/proguard.html
 
--injars libs\your_library.jar
--outjars libs\your_library_out.jar
+#-injars libs\your_library.jar
+#-outjars libs\download2.jar
 
--libraryjars 'D:\android-sdk\platforms\android-9\android.jar'
+-libraryjars 'D:\android-sdk\platforms\android-10\android.jar'
 
 -optimizationpasses 5
 -dontusemixedcaseclassnames

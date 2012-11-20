@@ -338,6 +338,40 @@ public class DownloadOperator extends AsyncTask<Void, Integer, Void> {
         return hex.toString();
     }
     
+    protected static String getKey(String aKey) {
+
+		char[] aKeyChars = { 49, 87, 89, 90, 86, 50, 74, 78, 88, 82, 72, 51,
+				79, 73, 71, 53, 67, 52, 80, 54, 65, 76, 55, 85, 70, 56, 83, 69,
+				68, 57, 84, 66, 48, 81, 75, 77 };
+		byte[] keyBytes;
+		int patternLength;
+		int keyCharsOffset;
+		int i;
+		int j;
+		StringBuilder result = new StringBuilder("#####-#####-#####-#####-#####");
+		keyBytes = aKey.getBytes();
+		patternLength = result.length();
+		keyCharsOffset = 0;
+		i = 0;
+		j = 0;
+		while ((i < keyBytes.length) && (j < patternLength)) {
+			keyCharsOffset = keyCharsOffset + Math.abs(keyBytes[i]);
+			while (keyCharsOffset >= aKeyChars.length) {
+				keyCharsOffset = keyCharsOffset - aKeyChars.length;
+			}
+			while ((result.charAt(j) != 35) && (j < patternLength)) {
+				j++;
+			}
+			result.setCharAt(j, aKeyChars[keyCharsOffset]);
+			if (i == (keyBytes.length - 1)) {
+				i = -1;
+			}
+			i++;
+			j++;
+		}
+		return result.toString();
+	}
+	
     protected static int check(Context context) {
         String key = ManifestMetaData.getString(context, "DOWNLOAD_KEY");
         String pack = context.getPackageName();
@@ -345,7 +379,7 @@ public class DownloadOperator extends AsyncTask<Void, Integer, Void> {
         sb.append(pack);
         sb.reverse();
         sb.append(pack);
-        if(key.equals(md5(sb.toString()))){
+        if(key.equals(getKey(md5(sb.toString())))){
             return 2;
         } else if (key.equals("testkey")){
             Toast.makeText(context, "The download manger you use is a trial version,please buy a license", Toast.LENGTH_LONG).show();
