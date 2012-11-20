@@ -1,22 +1,20 @@
 
 package com.zxt.download2;
 
-import android.content.Context;
-import android.os.AsyncTask;
-import android.util.Log;
-import android.widget.Toast;
-
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.RandomAccessFile;
-import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
+
+import android.content.Context;
+import android.os.AsyncTask;
+import android.util.Log;
+import android.widget.Toast;
 
 /**
  * Download worker
@@ -321,14 +319,12 @@ public class DownloadOperator extends AsyncTask<Void, Integer, Void> {
 
     
     protected static String md5(String string) {
-        byte[] hash;
+        byte[] hash = null;
         try {
             hash = MessageDigest.getInstance("MD5").digest(string.getBytes("UTF-8"));
-        } catch (NoSuchAlgorithmException e) {
-            throw new RuntimeException("Huh, MD5 should be supported?", e);
-        } catch (UnsupportedEncodingException e) {
-            throw new RuntimeException("Huh, UTF-8 should be supported?", e);
-        }
+        } catch (Exception e) {
+        	Log.e(TAG, "NoSuchAlgorithm");
+        } 
 
         StringBuilder hex = new StringBuilder(hash.length * 2);
         for (byte b : hash) {
