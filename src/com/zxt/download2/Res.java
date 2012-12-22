@@ -28,6 +28,9 @@ public class Res {
     private static Class<?> style = null;
 
     private static Class<?> string = null;
+    
+    private static Class<?> color = null;
+
 
     private static Class<?> array = null;
 
@@ -61,6 +64,11 @@ public class Res {
         }
         try {
             string = Class.forName(this.mContext.getPackageName() + ".R$string");
+        } catch (ClassNotFoundException e) {
+            Log.d(TAG, e.getMessage());
+        }
+        try {
+            color = Class.forName(this.mContext.getPackageName() + ".R$color");
         } catch (ClassNotFoundException e) {
             Log.d(TAG, e.getMessage());
         }
@@ -123,7 +131,11 @@ public class Res {
     public int getString(String paramString) {
         return getR(string, paramString);
     }
-
+    
+    public int getColor(String paramString) {
+        return getR(color, paramString);
+    }
+    
     public int getArray(String paramString) {
         return getR(array, paramString);
     }

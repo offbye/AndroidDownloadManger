@@ -119,11 +119,11 @@ public class DownloadingAdapter extends ArrayAdapter<DownloadTask> {
         }
 
         if (position % 2 == 0) {
-            convertView.setBackgroundColor(mContext.getResources().getColor(
-                    R.color.listview_even_bg));
+            convertView.setBackgroundColor(Res.getInstance(mContext).getColor(
+                   "listview_even_bg"));
         } else {
-            convertView.setBackgroundColor(mContext.getResources()
-                    .getColor(R.color.listview_odd_bg));
+            convertView.setBackgroundColor(Res.getInstance(mContext)
+                    .getColor("listview_odd_bg"));
         }
 
         return convertView;
