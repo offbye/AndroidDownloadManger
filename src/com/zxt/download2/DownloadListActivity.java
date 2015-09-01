@@ -204,7 +204,7 @@ public class DownloadListActivity extends Activity  {
             }
         }
         
-        DownloadOperator.check(mContext);
+        //DownloadOperator.check(mContext);
     }
 
     private void toggleView(boolean isShowDownloaded) {

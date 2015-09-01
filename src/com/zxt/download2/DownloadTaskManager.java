@@ -65,9 +65,9 @@ public class DownloadTaskManager {
     public static synchronized DownloadTaskManager getInstance(Context context) {
         if (sMe == null) {
             sMe = new DownloadTaskManager(context);
-            if (DownloadOperator.check(context)< 2){
-                mMaxTask  = 5;
-            }
+//            if (DownloadOperator.check(context)< 2){
+//                mMaxTask  = 5;
+//            }
         }
         return sMe;
     }
