@@ -129,7 +129,7 @@ public class DownloadingAdapter extends ArrayAdapter<DownloadTask> {
         return convertView;
     }
 
-    private String formatSize(int finishedSize, int totalSize) {
+    private String formatSize(long finishedSize, long totalSize) {
         StringBuilder sb = new StringBuilder(50);
 
         float finished = ((float) finishedSize) / 1024 / 1024;

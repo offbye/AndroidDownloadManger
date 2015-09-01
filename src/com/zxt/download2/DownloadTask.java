@@ -49,12 +49,12 @@ public class DownloadTask {
     /**
      * download finished Size
      */
-    private int finishedSize;
+    private long finishedSize;
 
     /**
      * total Size
      */
-    private int totalSize;
+    private long totalSize;
 
     /**
      * finished percent
@@ -151,7 +151,7 @@ public class DownloadTask {
      * 
      * @return the finishedSize
      */
-    public int getFinishedSize() {
+    public long getFinishedSize() {
         return finishedSize;
     }
 
@@ -160,7 +160,7 @@ public class DownloadTask {
      * 
      * @param finishedSize the finishedSize to set
      */
-    public void setFinishedSize(int finishedSize) {
+    public void setFinishedSize(long finishedSize) {
         this.finishedSize = finishedSize;
     }
 
@@ -169,7 +169,7 @@ public class DownloadTask {
      * 
      * @return the totalSize
      */
-    public int getTotalSize() {
+    public long getTotalSize() {
         return totalSize;
     }
 
@@ -178,7 +178,7 @@ public class DownloadTask {
      * 
      * @param totalSize the totalSize to set
      */
-    public void setTotalSize(int totalSize) {
+    public void setTotalSize(long totalSize) {
         this.totalSize = totalSize;
     }
 

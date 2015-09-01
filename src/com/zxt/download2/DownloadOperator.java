@@ -88,9 +88,9 @@ public class DownloadOperator extends AsyncTask<Void, Integer, Void> {
         HttpURLConnection conn = null;
         RandomAccessFile accessFile = null;
         InputStream is = null;
-        int finishedSize = 0;
-        int totalSize = 0;
-        int startSize = 0;
+        long finishedSize = 0;
+        long totalSize = 0;
+        long startSize = 0;
         try {
             URL url = new URL(mDownloadTask.getUrl());
             conn = (HttpURLConnection) url.openConnection();
@@ -153,11 +153,11 @@ public class DownloadOperator extends AsyncTask<Void, Integer, Void> {
                     mDownloadTask.setFinishedSize(finishedSize);
                     mDlTaskMng.updateDownloadTask(mDownloadTask);
                     speed =  (int)((finishedSize - startSize)/(int)(System.currentTimeMillis() + 1 - startTime));
-                    publishProgress(finishedSize, totalSize, speed);
+                    publishProgress((int)finishedSize/1024, (int)totalSize/1024, (int)speed/1024);
                 } else if (totalSize - finishedSize < UPDATE_DB_PER_SIZE) {//send message in this case
                     mDownloadTask.setFinishedSize(finishedSize);
                     speed =  (int)((finishedSize - startSize)/(int)(System.currentTimeMillis() + 1 - startTime));
-                    publishProgress(finishedSize, totalSize, speed);
+                    publishProgress((int)finishedSize/1024, (int)totalSize/1024, speed/1024);
                 }
 
             }
