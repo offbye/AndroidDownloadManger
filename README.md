@@ -2,6 +2,10 @@
 
 This is the source code of  android download manager. I devleoped this code when I develop a online video app, this lib is mainly designed for large video files download.It 's performace was tested fully.Now I decided to opensource under Apache License in 2014.
 
+<img src="http://img.my.csdn.net/uploads/201211/21/1353505828_7068.jpg" alt="" width="320" style="border: none;"/>
+<img src="http://img.my.csdn.net/uploads/201211/21/1353505882_8971.jpg" alt="" width="320" style="border: none;"/>
+
+
 I think it will help you when you want develop a app such as app market which need download manager feature. It support below features:
 
 ##1.User friendly API provided
