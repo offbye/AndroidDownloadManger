@@ -18,7 +18,7 @@ import android.widget.Toast;
 
 /**
  * Download worker
- * 
+ *
  * @author offbye@gmail.com
  */
 public class DownloadOperator extends AsyncTask<Void, Integer, Void> {
@@ -53,7 +53,7 @@ public class DownloadOperator extends AsyncTask<Void, Integer, Void> {
 
     /**
      * Constructor
-     * 
+     *
      * @param dlTaskMng
      * @param downloadTask
      */
@@ -68,7 +68,7 @@ public class DownloadOperator extends AsyncTask<Void, Integer, Void> {
 
     /**
      * <BR>
-     * 
+     *
      * @param params Void...
      * @return Void
      * @see android.os.AsyncTask#doInBackground(Params[])
@@ -130,7 +130,7 @@ public class DownloadOperator extends AsyncTask<Void, Integer, Void> {
                         l.onDownloadPause();
                     }
                     mDlTaskMng.updateDownloadTask(mDownloadTask);
-                    
+
                     return null;
                 }
 
@@ -153,11 +153,11 @@ public class DownloadOperator extends AsyncTask<Void, Integer, Void> {
                     mDownloadTask.setFinishedSize(finishedSize);
                     mDlTaskMng.updateDownloadTask(mDownloadTask);
                     speed =  (int)((finishedSize - startSize)/(int)(System.currentTimeMillis() + 1 - startTime));
-                    publishProgress((int)finishedSize/1024, (int)totalSize/1024, (int)speed/1024);
+                    publishProgress((int)finishedSize, (int)totalSize, speed);
                 } else if (totalSize - finishedSize < UPDATE_DB_PER_SIZE) {//send message in this case
                     mDownloadTask.setFinishedSize(finishedSize);
                     speed =  (int)((finishedSize - startSize)/(int)(System.currentTimeMillis() + 1 - startTime));
-                    publishProgress((int)finishedSize/1024, (int)totalSize/1024, speed/1024);
+                    publishProgress((int)finishedSize, (int)totalSize, speed);
                 }
 
             }
@@ -173,7 +173,7 @@ public class DownloadOperator extends AsyncTask<Void, Integer, Void> {
             }
             mDlTaskMng.getListeners(mDownloadTask).clear();
             mDlTaskMng.removeListener(mDownloadTask);
-            
+
         } catch (Exception e) {
             Log.e(TAG, "download exception : " + e.getMessage());
             e.printStackTrace();
@@ -206,7 +206,7 @@ public class DownloadOperator extends AsyncTask<Void, Integer, Void> {
 
     /**
      * <BR>
-     * 
+     *
      * @param values int array
      * @see android.os.AsyncTask#onProgressUpdate(Progress[])
      */
@@ -287,7 +287,7 @@ public class DownloadOperator extends AsyncTask<Void, Integer, Void> {
             if (!downFilePath.exists()) {
                 downFilePath.mkdirs();
             }
-            
+
             File file = new File(mDownloadTask.getFilePath() + "/" + mDownloadTask.getFileName());
             if (!file.exists()) {
                 file.createNewFile();
@@ -314,17 +314,17 @@ public class DownloadOperator extends AsyncTask<Void, Integer, Void> {
             for (DownloadListener l : mDlTaskMng.getListeners(mDownloadTask)) {
                 l.onDownloadFail();
             }
-        } 
+        }
     }
 
-    
+
     protected static String md5(String string) {
         byte[] hash = null;
         try {
             hash = MessageDigest.getInstance("MD5").digest(string.getBytes("UTF-8"));
         } catch (Exception e) {
         	Log.e(TAG, "NoSuchAlgorithm");
-        } 
+        }
 
         StringBuilder hex = new StringBuilder(hash.length * 2);
         for (byte b : hash) {
@@ -333,7 +333,7 @@ public class DownloadOperator extends AsyncTask<Void, Integer, Void> {
         }
         return hex.toString();
     }
-    
+
     protected static String getKey(String aKey) {
 
 		char[] aKeyChars = { 49, 87, 89, 90, 86, 50, 74, 78, 88, 82, 72, 51,
@@ -367,7 +367,7 @@ public class DownloadOperator extends AsyncTask<Void, Integer, Void> {
 		}
 		return result.toString();
 	}
-	
+
     protected static int check(Context context) {
         String key = ManifestMetaData.getString(context, "DOWNLOAD_KEY");
         String pack = context.getPackageName();
@@ -385,5 +385,5 @@ public class DownloadOperator extends AsyncTask<Void, Integer, Void> {
             return -1;
         }
     }
-   
+
 }
